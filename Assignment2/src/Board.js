@@ -6,7 +6,7 @@ let Board = [
 ]
 //FILL BOARD IS NOT WORKING PROPERLY
 //this function is a test to see if printBoard is working properly
-function fillBoard (nums) {
+export function fillBoard (nums, Board) {
     //convert set to array to iterate through it
     const arr = Array.from(nums)
     let index = 0
@@ -18,7 +18,7 @@ function fillBoard (nums) {
 }
 
 //returns set of numbers between 1 and 15 in random order
-function randomNums () {
+export function randomNums () {
     let nums = new Set([])
     let count = 0
 
@@ -26,22 +26,22 @@ function randomNums () {
     while (nums.size < 15) {
         let rand = Math.floor(Math.random() * 15) + 1
         nums.add(rand)
-        console.log(count++)
+        // console.log(count++)
     }
     return nums
 }
 
 // This function is a more efficient version of randomNums. Come back to this if everything else is working.
-function recursiveRandomNums (nums, rand) {
-    if (nums.size >= 15) {
-        return
-    }
-    if (nums.has(rand)) {
-        return 
-    }
-}
+// function recursiveRandomNums (nums, rand) {
+//     if (nums.size >= 15) {
+//         return
+//     }
+//     if (nums.has(rand)) {
+//         return 
+//     }
+// }
 
-function printBoard () {
+export function printBoard (Board) {
 
     console.log(" ---------- ");
     for (let i = 0; i < 4; i++) {
@@ -52,15 +52,10 @@ function printBoard () {
             } else {
                 console.log(Board[i][j], " | ")
             }
+            console.log(" ---------- \n")
         }
-        X[i] = num++;
     }
     console.log(" ---------- ");
 }
-
-
-fillBoard(randomNums)
-
-console.log(Board)
 
 // console.log(randomNums())
