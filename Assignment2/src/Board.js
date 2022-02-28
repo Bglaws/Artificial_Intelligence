@@ -52,7 +52,7 @@ export function printBoard (Board) {
             } else {
                 console.log(Board[i][j], " | ")
             }
-            console.log(" ---------- \n")
+            console.log(" ---------- ")
         }
     }
     console.log(" ---------- ");

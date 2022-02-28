@@ -1,6 +1,7 @@
 import { randomNums, fillBoard, printBoard } from "./Board.js";
 import { writeFile } from "fs";
 
+
 let Board = [
     [, , , ],
     [, , , ],
