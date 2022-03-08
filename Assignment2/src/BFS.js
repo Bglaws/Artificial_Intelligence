@@ -1,6 +1,9 @@
 
 const solution = false
 
+// current address of empty tile
+let currentAddress = []
+
 // for array comparisons
 const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
 
@@ -20,8 +23,7 @@ function getEmptyTile (Board) {
             // console.log("j = ", j)
             if(Board[i][j] === undefined) {
                 // save the address of the empty tile
-                let address = [3,3]
-                return address
+                currentAddress = [3,3]
             }
         }
     }
@@ -76,12 +78,39 @@ export function getMove (Board) {
 /**getNode recieves list of possible moves from getMoves,
  * and returns all list of new nodes after each move  
  */
+
+
 export function getNode (Board) {
     let moves = getMove(Board)
     // console.log(moves)
 
+    console.log(move(Board, moves))
+
     // this for loop performs the moves, and return the subsequent nodes
-    for (let i = 0; i < moves.length; i++) {
+    // for (let i = 0; i < moves.length; i++) {
+    //     move(Board, moves[i])
+    // }
+}
+
+
+/** move needs to return a new Board after the move passed to it is performed.
+ */
+function move(Board, move) {
+
+    address = currentAddress
+
+    // this aint it
+    if (move === 'N') {
+        address[0] = address[0] + 4
+        return 
+    }
+    else if (move === 'S') {
+        
+    }
+    else if (move === 'E') {
+
+    }
+    else if (move === 'W') {
 
     }
 }
