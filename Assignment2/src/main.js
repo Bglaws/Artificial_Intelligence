@@ -1,5 +1,5 @@
 import { randomNums, fillBoard, printBoard } from "./Board.js";
-import { getMove, getNode } from "./BFS.js"
+import { getNode } from "./BFS.js"
 import { writeFile } from "fs";
 
 

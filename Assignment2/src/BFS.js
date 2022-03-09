@@ -36,12 +36,9 @@ function getEmptyTile (Board) {
  * the undefined position will always be in the bottom left corner of the board
  * for now I will keep it this way.
  */
-export function getMove (Board) {
-    const address = getEmptyTile(Board)
-
-    // console.log(address)
-
-    console.log(Board)
+export function getPossibleMoves (Board) {
+    getEmptyTile(Board)
+    let address = currentAddress
 
     // corners
     // top left
@@ -73,6 +70,7 @@ export function getMove (Board) {
     // bottom right
     else if (equals(address, [2,2])) return ['N','S','E','W']
 
+    else return -1
 }
 
 /**getNode recieves list of possible moves from getMoves,
@@ -81,37 +79,41 @@ export function getMove (Board) {
 
 
 export function getNode (Board) {
-    let moves = getMove(Board)
-    // console.log(moves)
+    let moves = getPossibleMoves(Board)
+    let x = currentAddress[1]
+    let y = currentAddress[0]
 
-    console.log(move(Board, moves))
-
-    // this for loop performs the moves, and return the subsequent nodes
-    // for (let i = 0; i < moves.length; i++) {
-    //     move(Board, moves[i])
-    // }
+    for (let i = 0; i < moves.length; i++) {
+        move(Board, moves[i], x, y)
+    }
 }
 
 
-/** move needs to return a new Board after the move passed to it is performed.
+/** move performs the provided move, and adds the Board to the queue.
  */
-function move(Board, move) {
-
-    address = currentAddress
-
-    // this aint it
+function move(Board, move, x, y) {
+    const arr = Array.from(Board)
+    console.log(arr)
+    
     if (move === 'N') {
-        address[0] = address[0] + 4
-        return 
+        arr[y][x] = Board[y+1][x]
+        arr[y+1][x] = undefined
+        console.log(arr)
     }
     else if (move === 'S') {
-        
+        arr[y][x] = Board[y-1][x]
+        arr[y-1][x] = undefined
+        console.log(arr)
     }
     else if (move === 'E') {
-
+        arr[y][x] = Board[y][x-1]
+        arr[y][x-1] = undefined
+        console.log(arr)
     }
     else if (move === 'W') {
-
+        arr[y][x] = Board[y][x+1]
+        arr[y][x+1] = undefined
+        console.log(arr)
     }
 }
 
