@@ -15,6 +15,7 @@ export function fillBoard (nums, Board) {
             Board[i][j] = arr[index++];
         }
     }
+    Board[3][3] = 'X'
 }
 
 //returns set of numbers between 1 and 15 in random order

@@ -2,15 +2,12 @@ import { randomNums, fillBoard, printBoard } from "./Board.js";
 import { getNode } from "./BFS.js"
 import { writeFile } from "fs";
 
-
-let Board = [
+const Board = [
     [, , , ],
     [, , , ],
     [, , , ],
     [, , , ]
 ]
-
-let data = 'Does this even work?'
 
 // returns randomized Board
 fillBoard(randomNums(), Board)

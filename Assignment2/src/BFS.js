@@ -21,7 +21,7 @@ function getEmptyTile (Board) {
         // console.log("i = ", i)
         for (let j = 0; j < 4; j++) {
             // console.log("j = ", j)
-            if(Board[i][j] === undefined) {
+            if(Board[i][j] === 'X') {
                 // save the address of the empty tile
                 currentAddress = [3,3]
             }
@@ -37,7 +37,6 @@ function getEmptyTile (Board) {
  * for now I will keep it this way.
  */
 export function getPossibleMoves (Board) {
-    getEmptyTile(Board)
     let address = currentAddress
 
     // corners
@@ -79,6 +78,7 @@ export function getPossibleMoves (Board) {
 
 
 export function getNode (Board) {
+    getEmptyTile(Board)
     let moves = getPossibleMoves(Board)
     let x = currentAddress[1]
     let y = currentAddress[0]
@@ -89,30 +89,32 @@ export function getNode (Board) {
 }
 
 
-/** move performs the provided move, and adds the Board to the queue.
+/** move performs the provided move, and adds the new node to the queue.
  */
 function move(Board, move, x, y) {
-    const arr = Array.from(Board)
-    console.log(arr)
+    // need to create a deep copy of Board so a new node is created after each move
+    let arr = JSON.parse(JSON.stringify(Board))
+    console.log("new node looks like this ", arr)
+
     
     if (move === 'N') {
         arr[y][x] = Board[y+1][x]
-        arr[y+1][x] = undefined
+        arr[y+1][x] = 'X'
         console.log(arr)
     }
     else if (move === 'S') {
         arr[y][x] = Board[y-1][x]
-        arr[y-1][x] = undefined
+        arr[y-1][x] = 'X'
         console.log(arr)
     }
     else if (move === 'E') {
         arr[y][x] = Board[y][x-1]
-        arr[y][x-1] = undefined
+        arr[y][x-1] = 'X'
         console.log(arr)
     }
     else if (move === 'W') {
         arr[y][x] = Board[y][x+1]
-        arr[y][x+1] = undefined
+        arr[y][x+1] = 'X'
         console.log(arr)
     }
 }
