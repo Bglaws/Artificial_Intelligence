@@ -1,6 +1,7 @@
 import { randomNums, fillBoard, printBoard } from "./Board.js";
-import { getNode } from "./BFS.js"
+import { getNeighbors, getSolution } from "./BFS.js"
 import { writeFile } from "fs";
+import { Queue } from "./Queue.js";
 
 const Board = [
     [, , , ],
@@ -12,7 +13,7 @@ const Board = [
 // returns randomized Board
 fillBoard(randomNums(), Board)
 
-getNode(Board)
+getSolution(Board)
 
 
 

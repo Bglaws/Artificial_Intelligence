@@ -1,15 +1,25 @@
+import { Queue } from "./Queue.js";
 
-const solution = false
+let solution = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 11, 12],
+    [13, 14, 15, 'X']
+]
+let head = 0;
+
+// Queue for keeping track of order of the nodes
+let queue = new Queue()
+
+// Need to use a hashset in conjunction with queue. 
+// This is to ensure no duplicate nodes are added to the queue
+let set = new Set()
 
 // current address of empty tile
 let currentAddress = []
 
 // for array comparisons
 const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
-
-function Queue () {
-
-}
 
 /**Hang on to this function. for now it is not needed,
  * but if randomNums is updated this function will be necessary.
@@ -72,56 +82,102 @@ export function getPossibleMoves (Board) {
     else return -1
 }
 
-/**getNode recieves list of possible moves from getMoves,
- * and returns all list of new nodes after each move  
+
+/** move performs the provided move, and adds the new node to the queue.
  */
+function getNode(Board, move, x, y) {
+    // need to create a deep copy of Board so a new node is created after each move
+    let newNode = JSON.parse(JSON.stringify(Board))
+    
+    switch (move) {
+        case 'N':
+            newNode[y][x] = Board[y+1][x]
+            newNode[y+1][x] = 'X'
+            if (set.has(newNode)) {
+                break
+            }
+            else {
+                queue.enqueue(newNode)
+                set.add(newNode)
+            }
+            console.log("the board after N move", newNode)
+            break
 
+        case 'S':
+            newNode[y][x] = Board[y-1][x]
+            newNode[y-1][x] = 'X'
+            if (set.has(newNode)) {
+                break
+            }
+            else {
+                queue.enqueue(newNode)
+                set.add(newNode)
+            }
+            console.log("the board after S move", newNode)
+            break
 
-export function getNode (Board) {
+        case 'E':
+            newNode[y][x] = Board[y][x-1]
+            newNode[y][x-1] = 'X'
+            if (set.has(newNode)) {
+                break
+            } 
+            else {
+                queue.enqueue(newNode)
+                set.add(newNode)
+            }
+            console.log("the board after E move", newNode)
+            break
+        
+        case 'W': 
+            newNode[y][x] = Board[y][x+1]
+            newNode[y][x+1] = 'X'
+            if (set.has(newNode)) {
+                break
+            } 
+            else {
+                queue.enqueue(newNode)
+                set.add(newNode)
+            }
+            console.log("the board after W move", newNode)
+            break
+
+        default:
+            console.log("Something went wrong in 'move' function.")
+    }
+}
+
+/**getNode recieves list of possible moves from getMoves,
+ * and returns all list of new nodes after each move.
+ * The idea is to queue all neighboring nodes of the starting node
+ */
+ export function getNeighbors (Board) {
     getEmptyTile(Board)
     let moves = getPossibleMoves(Board)
     let x = currentAddress[1]
     let y = currentAddress[0]
 
     for (let i = 0; i < moves.length; i++) {
-        move(Board, moves[i], x, y)
+        getNode(Board, moves[i], x, y)
     }
+    console.log(queue)
+    Board = queue.peekTail()
 }
 
-
-/** move performs the provided move, and adds the new node to the queue.
- */
-function move(Board, move, x, y) {
-    // need to create a deep copy of Board so a new node is created after each move
-    let arr = JSON.parse(JSON.stringify(Board))
-    console.log("new node looks like this ", arr)
-
-    
-    if (move === 'N') {
-        arr[y][x] = Board[y+1][x]
-        arr[y+1][x] = 'X'
-        console.log(arr)
-    }
-    else if (move === 'S') {
-        arr[y][x] = Board[y-1][x]
-        arr[y-1][x] = 'X'
-        console.log(arr)
-    }
-    else if (move === 'E') {
-        arr[y][x] = Board[y][x-1]
-        arr[y][x-1] = 'X'
-        console.log(arr)
-    }
-    else if (move === 'W') {
-        arr[y][x] = Board[y][x+1]
-        arr[y][x+1] = 'X'
-        console.log(arr)
-    }
-}
-
-function getSolution () {
+export function getSolution ( Board) {
     // while solution is not found, keep making new nodes and checking them
-    for (let i = 0; !solution; i ++) {
-        
-    }    
+    let isSolved = false
+
+    // add initial random board to the queue
+    queue.enqueue(Board)
+
+    while(!isSolved) {
+        getNeighbors(Board)
+        let currentNode = queue.dequeue()
+        if (JSON.stringify(currentNode) == JSON.stringify(solution)) {
+            isSolved = true
+            console.log("Solution found")
+        }
+
+    }
 }
