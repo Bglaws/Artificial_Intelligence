@@ -1,19 +1,24 @@
-import { randomNums, fillBoard, printBoard } from "./Board.js";
+import { Board } from "./Board.js";
 import { getNeighbors, getSolution } from "./BFS.js"
 import { writeFile } from "fs";
 import { Queue } from "./Queue.js";
 
-const Board = [
-    [, , , ],
-    [, , , ],
-    [, , , ],
-    [, , , ]
-]
+// const Board = [
+//     [, , , ],
+//     [, , , ],
+//     [, , , ],
+//     [, , , ]
+// ]
 
+let puzzle = new Board()
+
+puzzle.getNewBoard()
+
+// console.log(puzzle)
 // returns randomized Board
-fillBoard(randomNums(), Board)
+// fillBoard(randomNums(), Board)
 
-getSolution(Board)
+getSolution(puzzle)
 
 
 
