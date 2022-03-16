@@ -1,5 +1,5 @@
 import { Board } from "./Board.js";
-import { getNeighbors, getSolution } from "./BFS.js"
+import { getSolution } from "./BFS.js"
 import { writeFile } from "fs";
 import { Queue } from "./Queue.js";
 

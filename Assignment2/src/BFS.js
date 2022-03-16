@@ -1,12 +1,14 @@
 import { Queue } from "./Queue.js";
 import {Board} from "./Board.js"
 
+// Solution to the puzzle
 let solution = [
     [1, 2, 3, 4],
     [5, 6, 7, 8],
     [9, 10, 11, 12],
     [13, 14, 15, 'X']
 ]
+// Total number of moves performed to find solution
 let numberOfMoves = 0
 
 // Queue for keeping track of order of the nodes
@@ -26,13 +28,11 @@ const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
  * but if randomNums is updated this function will be necessary.
  * Currently, empty tile is always in the bottom right corner. * 
  */
-function getEmptyTile (puzzle) {
+function getEmptyTile (currentNode) {
 
     for (let i = 0; i < 4; i++) {
-        // console.log("i = ", i)
         for (let j = 0; j < 4; j++) {
-            // Board
-            if(puzzle.board[i][j] === 'X') {
+            if(currentNode[i][j] === 'X') {
                 // save the address of the empty tile
                 currentAddress = [i, j]
             }
@@ -84,22 +84,24 @@ export function getPossibleMoves () {
 }
 
 
-/** move performs the provided move, and adds the new node to the queue.
+/** getNode performs the provided move, and adds the new node to the queue.
  */
-function getNode(puzzle, move, x, y) {
-    // need to create a deep copy of Board so a new node is created after each move
-    let newNode = JSON.parse(JSON.stringify(puzzle.board))
+function getNode(currentNode, move, x, y) {
+    let newNode = new Board()
+    newNode.board = JSON.parse(JSON.stringify(currentNode))
+
+    // console.log("newNode looks like ", newNode)
     
     switch (move) {
         case 'N':
-            newNode[y][x] = puzzle.board[y+1][x]
-            newNode[y+1][x] = 'X'
-            if (set.has(newNode)) {
+            newNode.board[y][x] = currentNode[y+1][x]
+            newNode.board[y+1][x] = 'X'
+            if (set.has(newNode.board)) {
                 break
             }
             else {
-                queue.enqueue(newNode)
-                set.add(newNode)
+                queue.enqueue(newNode.board)
+                set.add(newNode.board)
                 numberOfMoves++
                 console.log('N', "total number of moves: ", numberOfMoves)
                 
@@ -108,15 +110,14 @@ function getNode(puzzle, move, x, y) {
             break
 
         case 'S':
-            console.log(puzzle.board)
-            newNode[y][x] = puzzle.board[y-1][x]
-            newNode[y-1][x] = 'X'
-            if (set.has(newNode)) {
+            newNode.board[y][x] = currentNode[y-1][x]
+            newNode.board[y-1][x] = 'X'
+            if (set.has(newNode.board)) {
                 break
             }
             else {
-                queue.enqueue(newNode)
-                set.add(newNode)
+                queue.enqueue(newNode.board)
+                set.add(newNode.board)
                 numberOfMoves++
                 console.log('S', "total number of moves: ", numberOfMoves)
             }
@@ -124,14 +125,14 @@ function getNode(puzzle, move, x, y) {
             break
 
         case 'E':
-            newNode[y][x] = puzzle.board[y][x-1]
-            newNode[y][x-1] = 'X'
-            if (set.has(newNode)) {
+            newNode.board[y][x] = currentNode[y][x-1]
+            newNode.board[y][x-1] = 'X'
+            if (set.has(newNode.board)) {
                 break
             } 
             else {
-                queue.enqueue(newNode)
-                set.add(newNode)
+                queue.enqueue(newNode.board)
+                set.add(newNode.board)
                 numberOfMoves++
                 console.log('E', "total number of moves: ", numberOfMoves)
             }
@@ -139,14 +140,14 @@ function getNode(puzzle, move, x, y) {
             break
         
         case 'W': 
-            newNode[y][x] = puzzle.board[y][x+1]
-            newNode[y][x+1] = 'X'
-            if (set.has(newNode)) {
+            newNode.board[y][x] = currentNode[y][x+1]
+            newNode.board[y][x+1] = 'X'
+            if (set.has(newNode.board)) {
                 break
             } 
             else {
-                queue.enqueue(newNode)
-                set.add(newNode)
+                queue.enqueue(newNode.board)
+                set.add(newNode.board)
                 numberOfMoves++
                 console.log('W', "total number of moves: ", numberOfMoves)
             }
@@ -162,27 +163,23 @@ function getNode(puzzle, move, x, y) {
  * and returns all list of new nodes after each move.
  * The idea is to queue all neighboring nodes of the starting node
  */
- export function getNeighbors (puzzle) {
+ export function queueNeighbors (currentNode) {
     // HERE. GETEMPTYTILE ALWAYS RETURNS 3,3 THE INITIAL STARTING POINT
     // THIS NEEDS TO BE FIXED!!!
-    console.log("board in getNeighbors looks like this: ", puzzle.board)
-    getEmptyTile(puzzle)
-    console.log("the address of the empty tile is ", currentAddress)
+    // console.log("board in getNeighbors looks like this: ", puzzle.board)
+    // console.log("the address of the empty tile is ", currentAddress)
+
+    getEmptyTile(currentNode)
+    console.log("Empty tile is at address ", currentAddress)
     let moves = getPossibleMoves()
+    console.log("possible moves from current node are ", moves)
     let x = currentAddress[1]
     let y = currentAddress[0]
 
     for (let i = 0; i < moves.length; i++) {
-        getNode(puzzle, moves[i], x, y)
+        getNode(currentNode, moves[i], x, y)
     }
-    // console.log(queue)
 
-    // HERE IS WHERE IT ALL GOES WRONG. BOARD NEEDS TO BE SET TO THE HEAD OF THE QUEUE
-    // SET IS NOT WORKING IN GETNODE FUNCTION, OTHERWISE PROGRAM WOULD NOT BE CAUGHT IN INFINITE LOOP
-    // 
-    console.log("this is what peek returns", queue.peek())
-    puzzle.board = JSON.parse(JSON.stringify(queue.peek()))
-    console.log("this is what the board looks like after setting it equal to peek", puzzle)
 }
 
 export function getSolution (puzzle) {
@@ -190,26 +187,17 @@ export function getSolution (puzzle) {
     // add initial position to queue
     queue.enqueue(puzzle.board)
 
-    // let currentNode = [
-    //     [1, 2, 3, 4],
-    //     [5, 6, 7, 8],
-    //     [9, 10, 11, 12],
-    //     [13, 14, 15, 'X']
-    // ]
-    // console.log(currentNode)
-    // console.log(solution)
-    // if (JSON.stringify(currentNode) == JSON.stringify(solution)) {
-    //     isSolved = true
-    //     console.log("Solution found")
-    // }
+    // Current issue is that the queue returns undefined before any new unique nodes are added to the queue
+    // getPossibleMoves is returning -1!!!!!! something is going wrong there!!!
 
     while(!isSolved) {
-        getNeighbors(puzzle)
+        // currentNode is a Board obj 
         let currentNode = queue.dequeue()
         console.log("current node is ", currentNode)
-        if (JSON.stringify(currentNode) == JSON.stringify(solution)) {
+        queueNeighbors(currentNode)
+        if (equals(currentNode,solution)) {
             isSolved = true
-            console.log("Solution found")
+            console.log("Solution found!")
         }
     }
 }
