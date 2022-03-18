@@ -18,9 +18,6 @@ let queue = new Queue()
 // This is to ensure no duplicate nodes are added to the queue
 let set = new Set()
 
-// current address of empty tile
-let currentAddress = []
-
 // for array comparisons
 const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
 
@@ -29,12 +26,14 @@ const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
  * Currently, empty tile is always in the bottom right corner. * 
  */
 function getEmptyTile (currentNode) {
+    // current address of empty tile
+    let currentAddress = []
 
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             if(currentNode[i][j] === 'X') {
                 // save the address of the empty tile
-                currentAddress = [i, j]
+                return currentAddress = [i, j]
             }
         }
     }
@@ -47,8 +46,7 @@ function getEmptyTile (currentNode) {
  * the undefined position will always be in the bottom left corner of the board
  * for now I will keep it this way.
  */
-export function getPossibleMoves () {
-    let address = currentAddress
+export function getPossibleMoves (address) {
 
     // corners
     // top left
@@ -62,13 +60,13 @@ export function getPossibleMoves () {
 
     // sides
     // top
-    else if (equals(address, [0,1]) && equals(address, [0,2])) return ['N', 'E', 'W']
+    else if (equals(address, [0,1]) || equals(address, [0,2])) return ['N', 'E', 'W']
     // bottom
-    else if (equals(address, [3,1]) && equals(address, [3,2])) return ['S', 'E', 'W']
+    else if (equals(address, [3,1]) || equals(address, [3,2])) return ['S', 'E', 'W']
     // left side
-    else if (equals(address, [1,0]) && equals(address, [2,0])) return ['N', 'S', 'W']
+    else if (equals(address, [1,0]) || equals(address, [2,0])) return ['N', 'S', 'W']
     // right side 
-    else if (equals(address, [1,3]) && equals(address, [2,3])) return ['N', 'S', 'E']
+    else if (equals(address, [1,3]) || equals(address, [2,3])) return ['N', 'S', 'E']
 
     // inner circle
     // upper left
@@ -80,7 +78,10 @@ export function getPossibleMoves () {
     // bottom right
     else if (equals(address, [2,2])) return ['N','S','E','W']
 
-    else return -1
+    else {
+        console.log("getPossibleMoves is not working")
+        return -1
+    }
 }
 
 
@@ -92,18 +93,21 @@ function getNode(currentNode, move, x, y) {
 
     // console.log("newNode looks like ", newNode)
     
+    
     switch (move) {
         case 'N':
             newNode.board[y][x] = currentNode[y+1][x]
             newNode.board[y+1][x] = 'X'
-            if (set.has(newNode.board)) {
-                break
+            if (set.has(JSON.stringify(newNode.board))) {
+                // console.log("node after 'N' move is already in queue")
+                return
             }
             else {
                 queue.enqueue(newNode.board)
-                set.add(newNode.board)
+                set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 console.log('N', "total number of moves: ", numberOfMoves)
+                // console.log(newNode.board)
                 
             }
             // console.log("the board after N move", newNode)
@@ -112,14 +116,16 @@ function getNode(currentNode, move, x, y) {
         case 'S':
             newNode.board[y][x] = currentNode[y-1][x]
             newNode.board[y-1][x] = 'X'
-            if (set.has(newNode.board)) {
-                break
+            if (set.has(JSON.stringify(newNode.board))) {
+                // console.log("node after 'S' move is already in queue")
+                return
             }
             else {
                 queue.enqueue(newNode.board)
-                set.add(newNode.board)
+                set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 console.log('S', "total number of moves: ", numberOfMoves)
+                // console.log(newNode.board)
             }
             // console.log("the board after S move", newNode)
             break
@@ -127,14 +133,16 @@ function getNode(currentNode, move, x, y) {
         case 'E':
             newNode.board[y][x] = currentNode[y][x-1]
             newNode.board[y][x-1] = 'X'
-            if (set.has(newNode.board)) {
-                break
+            if (set.has(JSON.stringify(newNode.board))) {
+                // console.log("node after 'E' move is already in queue")
+                return
             } 
             else {
                 queue.enqueue(newNode.board)
-                set.add(newNode.board)
+                set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 console.log('E', "total number of moves: ", numberOfMoves)
+                // console.log(newNode.board)
             }
             // console.log("the board after E move", newNode)
             break
@@ -142,14 +150,16 @@ function getNode(currentNode, move, x, y) {
         case 'W': 
             newNode.board[y][x] = currentNode[y][x+1]
             newNode.board[y][x+1] = 'X'
-            if (set.has(newNode.board)) {
-                break
+            if (set.has(JSON.stringify(newNode.board))) {
+                // console.log("node after 'W' move is already in queue")
+                return
             } 
             else {
                 queue.enqueue(newNode.board)
-                set.add(newNode.board)
+                set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 console.log('W', "total number of moves: ", numberOfMoves)
+                // console.log(newNode.board)
             }
             // console.log("the board after W move", newNode)
             break
@@ -164,17 +174,13 @@ function getNode(currentNode, move, x, y) {
  * The idea is to queue all neighboring nodes of the starting node
  */
  export function queueNeighbors (currentNode) {
-    // HERE. GETEMPTYTILE ALWAYS RETURNS 3,3 THE INITIAL STARTING POINT
-    // THIS NEEDS TO BE FIXED!!!
-    // console.log("board in getNeighbors looks like this: ", puzzle.board)
-    // console.log("the address of the empty tile is ", currentAddress)
 
-    getEmptyTile(currentNode)
-    console.log("Empty tile is at address ", currentAddress)
-    let moves = getPossibleMoves()
-    console.log("possible moves from current node are ", moves)
-    let x = currentAddress[1]
-    let y = currentAddress[0]
+    let address = getEmptyTile(currentNode)
+    // console.log("Empty tile is at address ", currentAddress)
+    let moves = getPossibleMoves(address)
+    // console.log("possible moves from current node are ", moves)
+    let x = address[1]
+    let y = address[0]
 
     for (let i = 0; i < moves.length; i++) {
         getNode(currentNode, moves[i], x, y)
@@ -187,17 +193,23 @@ export function getSolution (puzzle) {
     // add initial position to queue
     queue.enqueue(puzzle.board)
 
-    // Current issue is that the queue returns undefined before any new unique nodes are added to the queue
-    // getPossibleMoves is returning -1!!!!!! something is going wrong there!!!
-
+    // Current issue is that the set containing the different nodes is adding identical nodes
+    // This means that the queue is adding duplicates. The reason why is that
+    // the set compares based on reference. if two identical obj have a different reference value they are not equal.
     while(!isSolved) {
-        // currentNode is a Board obj 
         let currentNode = queue.dequeue()
-        console.log("current node is ", currentNode)
-        queueNeighbors(currentNode)
-        if (equals(currentNode,solution)) {
+        if (equals(currentNode, solution)) {
             isSolved = true
             console.log("Solution found!")
         }
+        queueNeighbors(currentNode)
+        // TESTS
+
+        // console.log("original position ", puzzle.board)
+        // console.log("queue length is", queue.length)
+        // console.log("current node is ", currentNode)
+        // console.log("set contains ", set.size)
+        // console.log(set)
+        // console.log("queue length is ", queue.length)
     }
 }
