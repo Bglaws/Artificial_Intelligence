@@ -31,7 +31,6 @@ export class Board {
     //     return array;
     // }
 
-    //this function is a test to see if printBoard is working properly
     fillBoard (nums) {
         //convert set to array to iterate through it
         const arr = Array.from(nums)

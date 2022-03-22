@@ -1,5 +1,6 @@
 import { Queue } from "./Queue.js";
-import {Board} from "./Board.js"
+import { Board } from "./Board.js"
+import { writeFile, appendFile } from "fs";
 
 // Solution to the puzzle
 let solution = [
@@ -8,6 +9,7 @@ let solution = [
     [9, 10, 11, 12],
     [13, 14, 15, 'X']
 ]
+
 // Total number of moves performed to find solution
 let numberOfMoves = 0
 
@@ -21,12 +23,8 @@ let set = new Set()
 // for array comparisons
 const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
 
-/**Hang on to this function. for now it is not needed,
- * but if randomNums is updated this function will be necessary.
- * Currently, empty tile is always in the bottom right corner. * 
- */
+// returns the position of the empty tile
 function getEmptyTile (currentNode) {
-    // current address of empty tile
     let currentAddress = []
 
     for (let i = 0; i < 4; i++) {
@@ -39,12 +37,8 @@ function getEmptyTile (currentNode) {
     }
 }
 
-/**getMove returns all possible moves from a given position
+/**getPossibleMoves returns all possible moves from a given node
  * i.e. 'N' 'S' 'E' 'W'
- * 
- * I forgot that, with the way I set up randomNums, 
- * the undefined position will always be in the bottom left corner of the board
- * for now I will keep it this way.
  */
 export function getPossibleMoves (address) {
 
@@ -89,79 +83,83 @@ export function getPossibleMoves (address) {
  */
 function getNode(currentNode, move, x, y) {
     let newNode = new Board()
-    newNode.board = JSON.parse(JSON.stringify(currentNode))
-
-    // console.log("newNode looks like ", newNode)
-    
+    newNode.board = JSON.parse(JSON.stringify(currentNode))    
     
     switch (move) {
         case 'N':
             newNode.board[y][x] = currentNode[y+1][x]
             newNode.board[y+1][x] = 'X'
+
+            // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
-                // console.log("node after 'N' move is already in queue")
                 return
             }
             else {
                 queue.enqueue(newNode.board)
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
-                console.log('N', "total number of moves: ", numberOfMoves)
-                // console.log(newNode.board)
-                
+                // console.log('move: N,', "total moves: ", numberOfMoves)
+                appendFile('output.txt', JSON.stringify('move: N,', "total moves: ", numberOfMoves), (err) => {
+                    if (err) throw err
+                })
             }
-            // console.log("the board after N move", newNode)
             break
 
         case 'S':
             newNode.board[y][x] = currentNode[y-1][x]
             newNode.board[y-1][x] = 'X'
+
+            // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
-                // console.log("node after 'S' move is already in queue")
                 return
             }
             else {
                 queue.enqueue(newNode.board)
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
-                console.log('S', "total number of moves: ", numberOfMoves)
-                // console.log(newNode.board)
+                // console.log('move: S,', "total moves: ", numberOfMoves)
+                appendFile('output.txt', JSON.stringify('move: S,', "total moves: ", numberOfMoves), (err) => {
+                    if (err) throw err
+                })
             }
-            // console.log("the board after S move", newNode)
             break
 
         case 'E':
             newNode.board[y][x] = currentNode[y][x-1]
             newNode.board[y][x-1] = 'X'
+
+            // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
-                // console.log("node after 'E' move is already in queue")
                 return
             } 
             else {
                 queue.enqueue(newNode.board)
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
-                console.log('E', "total number of moves: ", numberOfMoves)
-                // console.log(newNode.board)
+                // console.log('move: E,', "total moves: ", numberOfMoves)
+                appendFile('output.txt', JSON.stringify('move: E,', "total moves: ", numberOfMoves), (err) => {
+                    if (err) throw err
+                })
             }
-            // console.log("the board after E move", newNode)
             break
         
         case 'W': 
             newNode.board[y][x] = currentNode[y][x+1]
             newNode.board[y][x+1] = 'X'
+
+            // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
-                // console.log("node after 'W' move is already in queue")
                 return
             } 
             else {
                 queue.enqueue(newNode.board)
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
-                console.log('W', "total number of moves: ", numberOfMoves)
-                // console.log(newNode.board)
+                // console.log('move: W,', "total moves: ", numberOfMoves)
+                appendFile('output.txt', JSON.stringify('move: W,', "total moves: ", numberOfMoves), (err) => {
+                    if (err) throw err
+                })
             }
-            // console.log("the board after W move", newNode)
             break
 
         default:
@@ -190,8 +188,16 @@ function getNode(currentNode, move, x, y) {
 
 export function getSolution (puzzle) {
     let isSolved = false
+
     // add initial position to queue
     queue.enqueue(puzzle.board)
+
+    // print initial board state
+    writeFile('output.txt', JSON.stringify(puzzle.board), (err) => {
+        if (err) throw err
+    })    
+
+    console.log("Tinking... ")
 
     // Current issue is that the set containing the different nodes is adding identical nodes
     // This means that the queue is adding duplicates. The reason why is that
