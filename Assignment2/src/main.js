@@ -1,7 +1,8 @@
-import { Board } from "./Board.js";
-import { getSolution } from "./BFS.js"
+import { Node } from "./Node.js";
+import { BFSSolution } from "./BFS.js"
 import { writeFile } from "fs";
 import { Queue } from "./Queue.js";
+import { DFSSolution } from "./DFS.js";
 
 // let test2 = new Board
 // test2.board = [
@@ -14,10 +15,15 @@ import { Queue } from "./Queue.js";
 // let test = new Board()
 // test.fillBoard([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
 
-let puzzle = new Board()
+let puzzle = new Node()
 puzzle.getNewBoard()
 
-getSolution(puzzle)
+// BFS solution
+BFSSolution(puzzle)
+
+// DFS solution
+// DFSSolution(puzzle)
+
 
 
 // write BFS result to file
@@ -27,7 +33,6 @@ getSolution(puzzle)
 // appendFile('output.txt', getSolution(puzzle), (err) => {
 //     if (err) throw err
 // })
-
 
 // write DFS result to file
 // writeFile('output.txt', Board.toString(), (err) => {
@@ -39,5 +44,3 @@ getSolution(puzzle)
 //     if (err) throw err
 // })
 
-//printBoard(Board)
-//console.log(Board)

@@ -1,5 +1,5 @@
 import { Queue } from "./Queue.js";
-import { Board } from "./Board.js"
+import { Node } from "./Node.js"
 import { writeFile, appendFile } from "fs";
 
 // Solution to the puzzle
@@ -25,13 +25,11 @@ const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
 
 // returns the position of the empty tile
 function getEmptyTile (currentNode) {
-    let currentAddress = []
-
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             if(currentNode[i][j] === 'X') {
                 // save the address of the empty tile
-                return currentAddress = [i, j]
+                return [i, j]
             }
         }
     }
@@ -40,7 +38,7 @@ function getEmptyTile (currentNode) {
 /**getPossibleMoves returns all possible moves from a given node
  * i.e. 'N' 'S' 'E' 'W'
  */
-export function getPossibleMoves (address) {
+function getPossibleMoves (address) {
 
     // corners
     // top left
@@ -78,11 +76,11 @@ export function getPossibleMoves (address) {
     }
 }
 
-
-/** getNode performs the provided move, and adds the new node to the queue.
+/** getNode performs the provided move, and adds the new node to the queue
+ * if and only if it has not already been added  
  */
 function getNode(currentNode, move, x, y) {
-    let newNode = new Board()
+    let newNode = new Node()
     newNode.board = JSON.parse(JSON.stringify(currentNode))    
     
     switch (move) {
@@ -164,17 +162,17 @@ function getNode(currentNode, move, x, y) {
 
         default:
             console.log("Something went wrong in 'move' function.")
+            return -1
     }
 }
 
-/**getNode recieves list of possible moves from getMoves,
+/**queueNeighbors recieves list of possible moves from getMoves,
  * and returns all list of new nodes after each move.
- * The idea is to queue all neighboring nodes of the starting node
+ * The idea is to queue all neighboring nodes of the given node
  */
- export function queueNeighbors (currentNode) {
-
+function queueNeighbors (currentNode) {
     let address = getEmptyTile(currentNode)
-    // console.log("Empty tile is at address ", currentAddress)
+
     let moves = getPossibleMoves(address)
     // console.log("possible moves from current node are ", moves)
     let x = address[1]
@@ -186,7 +184,7 @@ function getNode(currentNode, move, x, y) {
 
 }
 
-export function getSolution (puzzle) {
+export function BFSSolution (puzzle) {
     let isSolved = false
 
     // add initial position to queue
@@ -197,11 +195,8 @@ export function getSolution (puzzle) {
         if (err) throw err
     })    
 
-    console.log("Tinking... ")
+    console.log("Calculating BFS solution, this may take awhile... ")
 
-    // Current issue is that the set containing the different nodes is adding identical nodes
-    // This means that the queue is adding duplicates. The reason why is that
-    // the set compares based on reference. if two identical obj have a different reference value they are not equal.
     while(!isSolved) {
         let currentNode = queue.dequeue()
         if (equals(currentNode, solution)) {
@@ -219,3 +214,14 @@ export function getSolution (puzzle) {
         // console.log("queue length is ", queue.length)
     }
 }
+
+
+
+/** Try adding the nodes themselves to the queue, not just the node.board. 
+ * perhaps heap size is being used up because the queue is being filled with arrays 
+ * instead of just reference variables. Hopefully this will be a more efficient 
+ * use of heap space.
+ * 
+ * add the node itself to the queue
+ * add the node.board to the set
+*/

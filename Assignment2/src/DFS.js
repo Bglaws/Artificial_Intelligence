@@ -1,5 +1,4 @@
-import { Queue } from "./Queue.js";
-import { Board } from "./Board.js"
+import { Node } from "./Node.js"
 import { writeFile, appendFile } from "fs";
 
 // Solution to the puzzle
@@ -13,11 +12,9 @@ let solution = [
 // Total number of moves performed to find solution
 let numberOfMoves = 0
 
-// Queue for keeping track of order of the nodes
-let queue = new Queue()
+let stack = []
 
-// Need to use a hashset in conjunction with queue. 
-// This is to ensure no duplicate nodes are added to the queue
+// This is to ensure no duplicate nodes are added to the stack
 let set = new Set()
 
 // for array comparisons
@@ -25,13 +22,11 @@ const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
 
 // returns the position of the empty tile
 function getEmptyTile (currentNode) {
-    let currentAddress = []
-
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             if(currentNode[i][j] === 'X') {
                 // save the address of the empty tile
-                return currentAddress = [i, j]
+                return [i, j]
             }
         }
     }
@@ -40,7 +35,7 @@ function getEmptyTile (currentNode) {
 /**getPossibleMoves returns all possible moves from a given node
  * i.e. 'N' 'S' 'E' 'W'
  */
-export function getPossibleMoves (address) {
+function getPossibleMoves (address) {
 
     // corners
     // top left
@@ -79,10 +74,12 @@ export function getPossibleMoves (address) {
 }
 
 
-/** getNode performs the provided move, and adds the new node to the queue.
+/** getNode performs the provided move and adds the new node to the stack
+ * if and only if it has not already been added. in addition, it adds the
+ * newNode.board to the set
  */
 function getNode(currentNode, move, x, y) {
-    let newNode = new Board()
+    let newNode = new Node()
     newNode.board = JSON.parse(JSON.stringify(currentNode))    
     
     switch (move) {
@@ -95,7 +92,7 @@ function getNode(currentNode, move, x, y) {
                 return
             }
             else {
-                queue.enqueue(newNode.board)
+                stack.push(newNode)
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 // console.log('move: N,', "total moves: ", numberOfMoves)
@@ -114,7 +111,7 @@ function getNode(currentNode, move, x, y) {
                 return
             }
             else {
-                queue.enqueue(newNode.board)
+                stack.push(newNode)
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 // console.log('move: S,', "total moves: ", numberOfMoves)
@@ -133,7 +130,7 @@ function getNode(currentNode, move, x, y) {
                 return
             } 
             else {
-                queue.enqueue(newNode.board)
+                stack.push(newNode)
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 // console.log('move: E,', "total moves: ", numberOfMoves)
@@ -152,7 +149,7 @@ function getNode(currentNode, move, x, y) {
                 return
             } 
             else {
-                queue.enqueue(newNode.board)
+                stack.push(newNode)
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 // console.log('move: W,', "total moves: ", numberOfMoves)
@@ -167,55 +164,65 @@ function getNode(currentNode, move, x, y) {
     }
 }
 
-/**getNode recieves list of possible moves from getMoves,
- * and returns all list of new nodes after each move.
- * The idea is to queue all neighboring nodes of the starting node
+/** getAdjacentNodes arbitrarily chooses a next adjacent node to visit. 
+ * if the node has been visited already, check if currentNode has other
+ * nodes adjacent. if there arent, back track.
  */
- export function queueNeighbors (currentNode) {
-
-    let address = getEmptyTile(currentNode)
-    // console.log("Empty tile is at address ", currentAddress)
+ function getAdjacentNodes (currentNode) {
+    let address = getEmptyTile(currentNode.board)
     let moves = getPossibleMoves(address)
-    // console.log("possible moves from current node are ", moves)
     let x = address[1]
     let y = address[0]
 
-    for (let i = 0; i < moves.length; i++) {
-        getNode(currentNode, moves[i], x, y)
-    }
+    // if there are multiple possible moves, select one of them at random
+    if (moves.length > 1) {
+        let rand = Math.floor(Math.random() * moves.length) + 1
+        getNode(currentNode, moves[rand], x, y)
+        console.log("index of randomly selected move is", rand)
+    } 
+
+    else getNode(currentNode, moves[0], x, y)
+
+    // I think there should 
 
 }
 
-export function getSolution (puzzle) {
+export function DFSSolution (puzzle) {
     let isSolved = false
 
-    // add initial position to queue
-    queue.enqueue(puzzle.board)
+    stack.push(puzzle)
+    console.log("the stack contains", stack)
 
     // print initial board state
-    writeFile('output.txt', JSON.stringify(puzzle.board), (err) => {
-        if (err) throw err
-    })    
+    // writeFile('output.txt', JSON.stringify(puzzle.board), (err) => {
+    //     if (err) throw err
+    // })    
 
-    console.log("Tinking... ")
+    console.log("Calculating DFS solution, this may take awhile... ")
 
-    // Current issue is that the set containing the different nodes is adding identical nodes
-    // This means that the queue is adding duplicates. The reason why is that
-    // the set compares based on reference. if two identical obj have a different reference value they are not equal.
     while(!isSolved) {
-        let currentNode = queue.dequeue()
+        isNext = true
+        let currentNode = stack.pop()
+
+        // if current node is solution, puzzle is solved
         if (equals(currentNode, solution)) {
             isSolved = true
             console.log("Solution found!")
         }
-        queueNeighbors(currentNode)
-        // TESTS
+        // if current node has not been visited, add it to the set
+        if(!set.has(currentNode.board)) {
+            set.add(currentNode.board)
+        }
+        
+        // pop root off of stack and visit all adjacent nodes
+        // if there is no next node to visit,
+        // back track until reaching a node that does have a next node,
+        // or until reaching the root.
+        // if solution remains unfound, restart from a new random root node
 
-        // console.log("original position ", puzzle.board)
-        // console.log("queue length is", queue.length)
-        // console.log("current node is ", currentNode)
-        // console.log("set contains ", set.size)
-        // console.log(set)
-        // console.log("queue length is ", queue.length)
+        // while current node has adjacent nodes, push adjacent nodeds to the stack
+        while (currentNode.isNext) {
+            getAdjacentNodes(currentNode)
+        }
     }
 }
