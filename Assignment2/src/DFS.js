@@ -1,4 +1,5 @@
 import { Node } from "./Node.js"
+import { Stack } from "./Stack.js";
 import { writeFile, appendFile } from "fs";
 
 // Solution to the puzzle
@@ -9,13 +10,13 @@ let solution = [
     [13, 14, 15, 'X']
 ]
 
-// Total number of moves performed to find solution
-let numberOfMoves = 0
-
-let stack = []
+let stack = new Stack()
 
 // This is to ensure no duplicate nodes are added to the stack
 let set = new Set()
+
+// Total number of moves performed to find solution
+let numberOfMoves = 0
 
 // for array comparisons
 const equals = (arr1, arr2) => JSON.stringify(arr1) === JSON.stringify(arr2);
@@ -183,7 +184,11 @@ function getNode(currentNode, move, x, y) {
 
     else getNode(currentNode, moves[0], x, y)
 
-    // I think there should 
+    // I think there should a while loop here that looks at the head of the stack 
+    // without poping it. basically the head of the stack needs a pointer
+    // keep looping and pushing adjacent nodes until all adjacent nodes are found.
+    // once there are no more adjacent nodes back track (pop) through the stack until
+    // stack is empty. repeat process until solution is found. 
 
 }
 
@@ -219,7 +224,6 @@ export function DFSSolution (puzzle) {
         // back track until reaching a node that does have a next node,
         // or until reaching the root.
         // if solution remains unfound, restart from a new random root node
-
         // while current node has adjacent nodes, push adjacent nodeds to the stack
         while (currentNode.isNext) {
             getAdjacentNodes(currentNode)

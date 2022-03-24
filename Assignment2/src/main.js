@@ -19,10 +19,10 @@ let puzzle = new Node()
 puzzle.getNewBoard()
 
 // BFS solution
-BFSSolution(puzzle)
+// BFSSolution(puzzle)
 
 // DFS solution
-// DFSSolution(puzzle)
+DFSSolution(puzzle)
 
 
 
