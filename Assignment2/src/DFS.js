@@ -175,6 +175,8 @@ function getNode(currentNode, move, x, y) {
     let x = address[1]
     let y = address[0]
 
+    // if the set contains all possible moves,  then their is no 
+    while (currentNode.hasNextNode) {}
     // if there are multiple possible moves, select one of them at random
     if (moves.length > 1) {
         let rand = Math.floor(Math.random() * moves.length) + 1
@@ -225,7 +227,7 @@ export function DFSSolution (puzzle) {
         // or until reaching the root.
         // if solution remains unfound, restart from a new random root node
         // while current node has adjacent nodes, push adjacent nodeds to the stack
-        while (currentNode.isNext) {
+        while (currentNode.hasNextNode) {
             getAdjacentNodes(currentNode)
         }
     }
