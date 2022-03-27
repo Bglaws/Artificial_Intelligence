@@ -194,6 +194,11 @@ function getNode(currentNode, move, x, y) {
 
 }
 
+// START HERE, need to write this
+function hasNextNode() {
+
+}
+
 export function DFSSolution (puzzle) {
     let isSolved = false
 
@@ -222,7 +227,7 @@ export function DFSSolution (puzzle) {
         }
         
         // pop root off of stack and visit all adjacent nodes
-        // if there is no next node to visit,
+        // check to see if there is a nextnode to  visit. if there isnt,
         // back track until reaching a node that does have a next node,
         // or until reaching the root.
         // if solution remains unfound, restart from a new random root node
