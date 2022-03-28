@@ -79,7 +79,7 @@ function getPossibleMoves (address) {
  * if and only if it has not already been added. in addition, it adds the
  * newNode.board to the set
  */
-function getNode(currentNode, move, x, y) {
+function pushNextNode(currentNode, move, x, y) {
     let newNode = new Node()
     newNode.board = JSON.parse(JSON.stringify(currentNode))    
     
@@ -90,7 +90,7 @@ function getNode(currentNode, move, x, y) {
 
             // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
-                return
+                return false
             }
             else {
                 stack.push(newNode)
@@ -100,8 +100,8 @@ function getNode(currentNode, move, x, y) {
                 appendFile('output.txt', JSON.stringify('move: N,', "total moves: ", numberOfMoves), (err) => {
                     if (err) throw err
                 })
+                return true
             }
-            break
 
         case 'S':
             newNode.board[y][x] = currentNode[y-1][x]
@@ -109,7 +109,7 @@ function getNode(currentNode, move, x, y) {
 
             // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
-                return
+                return false
             }
             else {
                 stack.push(newNode)
@@ -119,8 +119,8 @@ function getNode(currentNode, move, x, y) {
                 appendFile('output.txt', JSON.stringify('move: S,', "total moves: ", numberOfMoves), (err) => {
                     if (err) throw err
                 })
+                return true
             }
-            break
 
         case 'E':
             newNode.board[y][x] = currentNode[y][x-1]
@@ -128,7 +128,7 @@ function getNode(currentNode, move, x, y) {
 
             // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
-                return
+                return false
             } 
             else {
                 stack.push(newNode)
@@ -138,8 +138,8 @@ function getNode(currentNode, move, x, y) {
                 appendFile('output.txt', JSON.stringify('move: E,', "total moves: ", numberOfMoves), (err) => {
                     if (err) throw err
                 })
+                return true
             }
-            break
         
         case 'W': 
             newNode.board[y][x] = currentNode[y][x+1]
@@ -147,7 +147,7 @@ function getNode(currentNode, move, x, y) {
 
             // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
-                return
+                return false
             } 
             else {
                 stack.push(newNode)
@@ -157,8 +157,8 @@ function getNode(currentNode, move, x, y) {
                 appendFile('output.txt', JSON.stringify('move: W,', "total moves: ", numberOfMoves), (err) => {
                     if (err) throw err
                 })
+                return true
             }
-            break
 
         default:
             console.log("Something went wrong in 'move' function.")
@@ -175,16 +175,24 @@ function getNode(currentNode, move, x, y) {
     let x = address[1]
     let y = address[0]
 
-    // if the set contains all possible moves,  then their is no 
-    while (currentNode.hasNextNode) {}
-    // if there are multiple possible moves, select one of them at random
-    if (moves.length > 1) {
-        let rand = Math.floor(Math.random() * moves.length) + 1
-        getNode(currentNode, moves[rand], x, y)
-        console.log("index of randomly selected move is", rand)
-    } 
+    // before making a choice as to which node to visit next,
+    // check to make sure current node has any next node to visit
 
-    else getNode(currentNode, moves[0], x, y)
+    while(hasNextNode(currentNode, moves, x, y)) {
+        // currentNode has atleast one adjacent unvisited node
+        // next, pick one of those nodes and add it to the stack
+
+        //HERE
+
+        // if there are multiple possible moves, select one of them at random
+        if (moves.length > 1) {
+            let rand = Math.floor(Math.random() * moves.length) + 1
+            pushNextNode(currentNode, moves[rand], x, y)
+            console.log("index of randomly selected move is", rand)
+        } 
+
+        else pushNextNode(currentNode, moves[0], x, y)
+    }
 
     // I think there should a while loop here that looks at the head of the stack 
     // without poping it. basically the head of the stack needs a pointer
@@ -195,8 +203,63 @@ function getNode(currentNode, move, x, y) {
 }
 
 // START HERE, need to write this
-function hasNextNode() {
+function hasNextNode(currentNode, moves, x ,y) {
+    for (let i = 0; i < moves.length; i++) {
+        if (getNewNodes(currentNode, moves[i], x, y)) {
+            return true
+        }
+    }
+    return false
+}
 
+function getNewNodes(currentNode, move, x, y) {
+    let newNode = new Node()
+    newNode.board = JSON.parse(JSON.stringify(currentNode))    
+    
+    switch (move) {
+        case 'N':
+            newNode.board[y][x] = currentNode[y+1][x]
+            newNode.board[y+1][x] = 'X'
+
+            // if node is already in queue, do nothing
+            if (set.has(JSON.stringify(newNode.board))) {
+                return false
+            }
+            else return true
+
+        case 'S':
+            newNode.board[y][x] = currentNode[y-1][x]
+            newNode.board[y-1][x] = 'X'
+
+            // if node is already in queue, do nothing
+            if (set.has(JSON.stringify(newNode.board))) {
+                return false
+            }
+            else return true
+
+        case 'E':
+            newNode.board[y][x] = currentNode[y][x-1]
+            newNode.board[y][x-1] = 'X'
+
+            // if node is already in queue, do nothing
+            if (set.has(JSON.stringify(newNode.board))) {
+                return false
+            } 
+            else return true
+        
+        case 'W': 
+            newNode.board[y][x] = currentNode[y][x+1]
+            newNode.board[y][x+1] = 'X'
+
+            // if node is already in queue, do nothing
+            if (set.has(JSON.stringify(newNode.board))) {
+                return false
+            } 
+            else return true
+
+        default:
+            console.log("Something went wrong in 'move' function.")
+    }
 }
 
 export function DFSSolution (puzzle) {
@@ -232,8 +295,6 @@ export function DFSSolution (puzzle) {
         // or until reaching the root.
         // if solution remains unfound, restart from a new random root node
         // while current node has adjacent nodes, push adjacent nodeds to the stack
-        while (currentNode.hasNextNode) {
-            getAdjacentNodes(currentNode)
-        }
+        getAdjacentNodes(currentNode)
     }
 }
