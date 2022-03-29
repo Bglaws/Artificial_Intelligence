@@ -81,11 +81,11 @@ function getPossibleMoves (address) {
  */
 function pushNextNode(currentNode, move, x, y) {
     let newNode = new Node()
-    newNode.board = JSON.parse(JSON.stringify(currentNode))    
+    newNode.board = JSON.parse(JSON.stringify(currentNode.board))    
     
     switch (move) {
         case 'N':
-            newNode.board[y][x] = currentNode[y+1][x]
+            newNode.board[y][x] = currentNode.board[y+1][x]
             newNode.board[y+1][x] = 'X'
 
             // if node is already in queue, do nothing
@@ -104,7 +104,7 @@ function pushNextNode(currentNode, move, x, y) {
             }
 
         case 'S':
-            newNode.board[y][x] = currentNode[y-1][x]
+            newNode.board[y][x] = currentNode.board[y-1][x]
             newNode.board[y-1][x] = 'X'
 
             // if node is already in queue, do nothing
@@ -123,7 +123,7 @@ function pushNextNode(currentNode, move, x, y) {
             }
 
         case 'E':
-            newNode.board[y][x] = currentNode[y][x-1]
+            newNode.board[y][x] = currentNode.board[y][x-1]
             newNode.board[y][x-1] = 'X'
 
             // if node is already in queue, do nothing
@@ -142,7 +142,7 @@ function pushNextNode(currentNode, move, x, y) {
             }
         
         case 'W': 
-            newNode.board[y][x] = currentNode[y][x+1]
+            newNode.board[y][x] = currentNode.board[y][x+1]
             newNode.board[y][x+1] = 'X'
 
             // if node is already in queue, do nothing
@@ -161,7 +161,7 @@ function pushNextNode(currentNode, move, x, y) {
             }
 
         default:
-            console.log("Something went wrong in 'move' function.")
+            console.log("Something went wrong in 'pushNextNode' function.")
     }
 }
 
@@ -171,12 +171,10 @@ function pushNextNode(currentNode, move, x, y) {
  */
  function getAdjacentNodes (currentNode) {
     let address = getEmptyTile(currentNode.board)
+    console.log("address of empty tile is", address)
     let moves = getPossibleMoves(address)
     let x = address[1]
     let y = address[0]
-
-    // before making a choice as to which node to visit next,
-    // check to make sure current node has any next node to visit
 
     while(hasNextNode(currentNode, moves, x, y)) {
         // currentNode has atleast one adjacent unvisited node
@@ -188,21 +186,22 @@ function pushNextNode(currentNode, move, x, y) {
         if (moves.length > 1) {
             let rand = Math.floor(Math.random() * moves.length) + 1
             pushNextNode(currentNode, moves[rand], x, y)
-            console.log("index of randomly selected move is", rand)
         } 
 
         else pushNextNode(currentNode, moves[0], x, y)
-    }
 
-    // I think there should a while loop here that looks at the head of the stack 
-    // without poping it. basically the head of the stack needs a pointer
-    // keep looping and pushing adjacent nodes until all adjacent nodes are found.
-    // once there are no more adjacent nodes back track (pop) through the stack until
-    // stack is empty. repeat process until solution is found. 
+        // set currentNode to the last node pushed to the top of stack
+        currentNode = stack.peek()
+        address = getEmptyTile(currentNode.board)
+        console.log("address of empty tile is", address)
+        moves = getPossibleMoves(address)
+        x = address[1]
+        y = address[0]
+    }
 
 }
 
-// START HERE, need to write this
+// this function verifies whether the current node has an unvisited neighbor 
 function hasNextNode(currentNode, moves, x ,y) {
     for (let i = 0; i < moves.length; i++) {
         if (getNewNodes(currentNode, moves[i], x, y)) {
@@ -212,13 +211,15 @@ function hasNextNode(currentNode, moves, x ,y) {
     return false
 }
 
+// this function performs the given move to check and see if it has 
+// reached the resulting node before (i.e. by checking the set for the node) 
 function getNewNodes(currentNode, move, x, y) {
     let newNode = new Node()
-    newNode.board = JSON.parse(JSON.stringify(currentNode))    
-    
+    newNode.board = JSON.parse(JSON.stringify(currentNode.board))    
+
     switch (move) {
         case 'N':
-            newNode.board[y][x] = currentNode[y+1][x]
+            newNode.board[y][x] = currentNode.board[y+1][x]
             newNode.board[y+1][x] = 'X'
 
             // if node is already in queue, do nothing
@@ -228,7 +229,7 @@ function getNewNodes(currentNode, move, x, y) {
             else return true
 
         case 'S':
-            newNode.board[y][x] = currentNode[y-1][x]
+            newNode.board[y][x] = currentNode.board[y-1][x]
             newNode.board[y-1][x] = 'X'
 
             // if node is already in queue, do nothing
@@ -238,7 +239,7 @@ function getNewNodes(currentNode, move, x, y) {
             else return true
 
         case 'E':
-            newNode.board[y][x] = currentNode[y][x-1]
+            newNode.board[y][x] = currentNode.board[y][x-1]
             newNode.board[y][x-1] = 'X'
 
             // if node is already in queue, do nothing
@@ -248,7 +249,7 @@ function getNewNodes(currentNode, move, x, y) {
             else return true
         
         case 'W': 
-            newNode.board[y][x] = currentNode[y][x+1]
+            newNode.board[y][x] = currentNode.board[y][x+1]
             newNode.board[y][x+1] = 'X'
 
             // if node is already in queue, do nothing
@@ -258,7 +259,7 @@ function getNewNodes(currentNode, move, x, y) {
             else return true
 
         default:
-            console.log("Something went wrong in 'move' function.")
+            console.log("Something went wrong in 'getNewNodes' function.")
     }
 }
 
@@ -266,7 +267,6 @@ export function DFSSolution (puzzle) {
     let isSolved = false
 
     stack.push(puzzle)
-    console.log("the stack contains", stack)
 
     // print initial board state
     // writeFile('output.txt', JSON.stringify(puzzle.board), (err) => {
@@ -275,8 +275,7 @@ export function DFSSolution (puzzle) {
 
     console.log("Calculating DFS solution, this may take awhile... ")
 
-    while(!isSolved) {
-        isNext = true
+    while(!isSolved) {        
         let currentNode = stack.pop()
 
         // if current node is solution, puzzle is solved
@@ -285,16 +284,10 @@ export function DFSSolution (puzzle) {
             console.log("Solution found!")
         }
         // if current node has not been visited, add it to the set
-        if(!set.has(currentNode.board)) {
-            set.add(currentNode.board)
+        if(!set.has(JSON.stringify(currentNode.board))) {
+            set.add(JSON.stringify(currentNode.board))
         }
         
-        // pop root off of stack and visit all adjacent nodes
-        // check to see if there is a nextnode to  visit. if there isnt,
-        // back track until reaching a node that does have a next node,
-        // or until reaching the root.
-        // if solution remains unfound, restart from a new random root node
-        // while current node has adjacent nodes, push adjacent nodeds to the stack
         getAdjacentNodes(currentNode)
     }
 }

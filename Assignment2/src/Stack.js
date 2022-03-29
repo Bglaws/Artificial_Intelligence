@@ -10,14 +10,14 @@ export class Stack {
     }
 
     pop() {
-        const item = this.elements[this.head]
-        delete this.elements[this.head]
+        const item = this.elements[this.head-1]
+        delete this.elements[this.head-1]
         this.head--
         return item
     }
 
     peek() {
-        return this.elements[this.head]
+        return this.elements[this.head-1]
     }
 
     get height() {

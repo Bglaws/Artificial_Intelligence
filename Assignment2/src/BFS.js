@@ -214,14 +214,3 @@ export function BFSSolution (puzzle) {
         // console.log("queue length is ", queue.length)
     }
 }
-
-
-
-/** Try adding the nodes themselves to the queue, not just the node.board. 
- * perhaps heap size is being used up because the queue is being filled with arrays 
- * instead of just reference variables. Hopefully this will be a more efficient 
- * use of heap space.
- * 
- * add the node itself to the queue
- * add the node.board to the set
-*/

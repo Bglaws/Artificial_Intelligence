@@ -6,8 +6,6 @@ export class Node {
             [, , , ],
             [, , , ]
         ]
-        // only needed for DFS
-        this.hasNextNode = true
     }
 
     fillBoard (nums) {

@@ -4,25 +4,23 @@ import { writeFile } from "fs";
 import { Queue } from "./Queue.js";
 import { DFSSolution } from "./DFS.js";
 
-// let test2 = new Board
-// test2.board = [
-//     [1, 2, 3, 4],
-//     [5, 6, 7, 8],
-//     [9, 10, 11, 12],
-//     [13, 14, 'X', 15]
-// ]
-
-// let test = new Board()
-// test.fillBoard([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
-
 let puzzle = new Node()
 puzzle.getNewBoard()
 
 // BFS solution
 // BFSSolution(puzzle)
 
+// DFS is much simpler, since it is less efficient
+let DFSPuzzle = new Node()
+DFSPuzzle.board = [
+    [1,2,3,4],
+    [5,6,7,8],
+    [9,10,11,12],
+    [13,14,'X',15]
+]
+
 // DFS solution
-DFSSolution(puzzle)
+DFSSolution(DFSPuzzle)
 
 
 
