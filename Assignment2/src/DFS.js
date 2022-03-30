@@ -37,6 +37,7 @@ function getEmptyTile (currentNode) {
  * i.e. 'N' 'S' 'E' 'W'
  */
 function getPossibleMoves (address) {
+    console.log("whats going on in getPossibleMoves?", address)
 
     // corners
     // top left
@@ -83,6 +84,8 @@ function pushNextNode(currentNode, move, x, y) {
     let newNode = new Node()
     newNode.board = JSON.parse(JSON.stringify(currentNode.board))    
     
+    console.log("move is", move)
+
     switch (move) {
         case 'N':
             newNode.board[y][x] = currentNode.board[y+1][x]
