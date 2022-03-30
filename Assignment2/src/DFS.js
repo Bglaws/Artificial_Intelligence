@@ -37,7 +37,6 @@ function getEmptyTile (currentNode) {
  * i.e. 'N' 'S' 'E' 'W'
  */
 function getPossibleMoves (address) {
-    console.log("whats going on in getPossibleMoves?", address)
 
     // corners
     // top left
@@ -84,7 +83,7 @@ function pushNextNode(currentNode, move, x, y) {
     let newNode = new Node()
     newNode.board = JSON.parse(JSON.stringify(currentNode.board))    
     
-    console.log("move is", move)
+    console.log("move in pushNextNode is", move)
 
     switch (move) {
         case 'N':
@@ -173,35 +172,48 @@ function pushNextNode(currentNode, move, x, y) {
  * nodes adjacent. if there arent, back track.
  */
  function getAdjacentNodes (currentNode) {
+    let solved = false
     let address = getEmptyTile(currentNode.board)
-    console.log("address of empty tile is", address)
     let moves = getPossibleMoves(address)
     let x = address[1]
     let y = address[0]
 
-    while(hasNextNode(currentNode, moves, x, y)) {
-        // currentNode has atleast one adjacent unvisited node
-        // next, pick one of those nodes and add it to the stack
+    while(!solved) {
 
-        //HERE
+        /**So far this while loop does the following:
+         * it selects a random move from moves[]
+         * it attempts to push the node created from the corresponding move to the stack
+         * if that node has previously been visited, pushNextNode returns false, and another move is chosen
+         * if there are no more moves left, no new node has been added to the stack.
+         * the stack will then backtrack until it finds a node with an unvisted neighbor.
+         */
 
-        // if there are multiple possible moves, select one of them at random
-        if (moves.length > 1) {
+        // HERE. THIS WHILE CONDITION ISNT WORKING
+        let successfulPush = false
+        while (successfulPush != true || moves.length < 1) {
             let rand = Math.floor(Math.random() * moves.length) + 1
-            pushNextNode(currentNode, moves[rand], x, y)
-        } 
+            console.log("random move is ", moves[rand])
+            successfulPush = pushNextNode(currentNode, moves[rand], x, y)
+            moves.splice(rand, 1)
+        }
 
-        else pushNextNode(currentNode, moves[0], x, y)
+        // set currentNode to the new node that was pushed to the top of stack
+        currentNode = stack.pop()
+        
+        // if current node is solution, puzzle is solved
+        if (equals(currentNode, solution)) {
+            isSolved = true
+            console.log("Solution found!")
+            return currentNode
+        }
 
-        // set currentNode to the last node pushed to the top of stack
-        currentNode = stack.peek()
         address = getEmptyTile(currentNode.board)
         console.log("address of empty tile is", address)
         moves = getPossibleMoves(address)
         x = address[1]
         y = address[0]
+        // console.log("the stack is", stack)
     }
-
 }
 
 // this function verifies whether the current node has an unvisited neighbor 
@@ -267,8 +279,6 @@ function getNewNodes(currentNode, move, x, y) {
 }
 
 export function DFSSolution (puzzle) {
-    let isSolved = false
-
     stack.push(puzzle)
 
     // print initial board state
@@ -277,20 +287,18 @@ export function DFSSolution (puzzle) {
     // })    
 
     console.log("Calculating DFS solution, this may take awhile... ")
+  
+    let currentNode = stack.pop()
 
-    while(!isSolved) {        
-        let currentNode = stack.pop()
-
-        // if current node is solution, puzzle is solved
-        if (equals(currentNode, solution)) {
-            isSolved = true
-            console.log("Solution found!")
-        }
-        // if current node has not been visited, add it to the set
-        if(!set.has(JSON.stringify(currentNode.board))) {
-            set.add(JSON.stringify(currentNode.board))
-        }
-        
-        getAdjacentNodes(currentNode)
+    // if current node is solution, puzzle is solved
+    if (equals(currentNode, solution)) {
+        isSolved = true
+        console.log("Solution found!")
     }
+    // if current node has not been visited, add it to the set
+    if(!set.has(JSON.stringify(currentNode.board))) {
+        set.add(JSON.stringify(currentNode.board))
+    }
+    
+    console.log("the solution was found after", numberOfMoves, "moves.", getAdjacentNodes(currentNode))
 }
