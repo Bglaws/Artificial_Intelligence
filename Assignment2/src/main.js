@@ -21,24 +21,3 @@ DFSPuzzle.board = [
 
 // DFS solution
 DFSSolution(DFSPuzzle)
-
-
-
-// write BFS result to file
-// writeFile('output.txt', JSON.stringify(puzzle.board), (err) => {
-//     if (err) throw err
-// })
-// appendFile('output.txt', getSolution(puzzle), (err) => {
-//     if (err) throw err
-// })
-
-// write DFS result to file
-// writeFile('output.txt', Board.toString(), (err) => {
-//     if (err) throw err
-// })
-
-// write other result to file 
-// writeFile('output.txt', Board.toString(), (err) => {
-//     if (err) throw err
-// })
-
