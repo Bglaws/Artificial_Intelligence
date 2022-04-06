@@ -1,17 +1,7 @@
 import { Queue } from "./Queue.js";
 import { Node } from "./Node.js"
 import { writeFile, appendFile } from "fs";
-
-// Solution to the puzzle
-let solution = [
-    [1, 2, 3, 4],
-    [5, 6, 7, 8],
-    [9, 10, 11, 12],
-    [13, 14, 15, 'X']
-]
-
-// Total number of moves performed to find solution
-let graphDepth = 0
+import { SOLUTION } from "./Solution.js";
 
 // Queue for keeping track of order of the nodes
 let queue = new Queue()
@@ -165,18 +155,15 @@ function queueNeighbors (currentNode) {
     for (let i = 0; i < moves.length; i++) {
         getNode(currentNode, moves[i], x, y)
     }
-    // this does not accurately keep track of node depth
-    graphDepth++
 }
 
 export function BFSSolution (puzzle) {
     // add initial position to queue
     queue.enqueue(puzzle)
-    graphDepth++
 
-    // print initial board state
+    // print starting position
     let str = "Original board:  " + JSON.stringify(puzzle.board) +"\n\n"
-    writeFile('BFSoutput.txt', str, (err) => {
+    writeFile('../output/BFSoutput.txt', str, (err) => {
         if (err) throw err
     })    
 
@@ -184,15 +171,15 @@ export function BFSSolution (puzzle) {
 
     while(true) {
         let currentNode = queue.dequeue()
-        console.log("currentNode in main is", currentNode)
+        console.log("currentNode is", currentNode)
 
-        if (equals(currentNode.board, solution)) {
-            console.log("Solution found!")
+        if (equals(currentNode.board, SOLUTION)) {
+            console.log("Solution found! See DFSoutput for more information.")
 
-            let output = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
+            let results = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
             ". Solution found in " + JSON.stringify(currentNode.depth) + " moves!"
 
-            appendFile('BFSoutput.txt', output, (err) => {
+            appendFile('../output/BFSoutput.txt', results, (err) => {
                 if (err) throw err
             })    
             break

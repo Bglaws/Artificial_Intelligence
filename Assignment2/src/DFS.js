@@ -98,7 +98,7 @@ function pushNextNode (currentNode, move, x, y) {
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 // console.log('move: N,', "total moves: ", numberOfMoves)
-                appendFile('output.txt', JSON.stringify('move: N,', "total moves: ", numberOfMoves), (err) => {
+                appendFile('DFSoutput.txt', JSON.stringify('move: N,', "total moves: ", numberOfMoves), (err) => {
                     if (err) throw err
                 })
                 return true
@@ -117,7 +117,7 @@ function pushNextNode (currentNode, move, x, y) {
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 // console.log('move: S,', "total moves: ", numberOfMoves)
-                appendFile('output.txt', JSON.stringify('move: S,', "total moves: ", numberOfMoves), (err) => {
+                appendFile('DFSoutput.txt', JSON.stringify('move: S,', "total moves: ", numberOfMoves), (err) => {
                     if (err) throw err
                 })
                 return true
@@ -136,7 +136,7 @@ function pushNextNode (currentNode, move, x, y) {
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 // console.log('move: E,', "total moves: ", numberOfMoves)
-                appendFile('output.txt', JSON.stringify('move: E,', "total moves: ", numberOfMoves), (err) => {
+                appendFile('DFSoutput.txt', JSON.stringify('move: E,', "total moves: ", numberOfMoves), (err) => {
                     if (err) throw err
                 })
                 return true
@@ -155,7 +155,7 @@ function pushNextNode (currentNode, move, x, y) {
                 set.add(JSON.stringify(newNode.board))
                 numberOfMoves++
                 // console.log('move: W,', "total moves: ", numberOfMoves)
-                appendFile('output.txt', JSON.stringify('move: W,', "total moves: ", numberOfMoves), (err) => {
+                appendFile('DFSoutput.txt', JSON.stringify('move: W,', "total moves: ", numberOfMoves), (err) => {
                     if (err) throw err
                 })
                 return true
@@ -166,7 +166,7 @@ function pushNextNode (currentNode, move, x, y) {
     }
 }
 
-/** getAdjacentNodes arbitrarily chooses a next adjacent node to visit. 
+/**getAdjacentNodes arbitrarily chooses a next adjacent node to visit. 
  * if the node has been visited already, check if currentNode has other
  * nodes adjacent. if there arent, back track.
  */
@@ -197,7 +197,7 @@ export function DFSSolution (puzzle) {
     stack.push(puzzle)
     let currentNode = 0
     // print initial board state
-    writeFile('output.txt', JSON.stringify(puzzle.board), (err) => {
+    writeFile('DFSoutput.txt', JSON.stringify(puzzle.board), (err) => {
         if (err) throw err
     })    
 
@@ -213,12 +213,13 @@ export function DFSSolution (puzzle) {
             solved = true
             console.log("Solution found!")
             console.log("the solution was found after", numberOfMoves, "move(s).", currentNode)
-            appendFile('output.txt', JSON.stringify("total moves: ", numberOfMoves, "final solution", currentNode), (err) => {
+            
+            appendFile('DFSoutput.txt', JSON.stringify("total moves: ", numberOfMoves, "final solution", currentNode), (err) => {
                 if (err) throw err
             })
             break
         }
-        // // if current node has not been visited, add it to the set
+        // if current node has not been visited, add it to the set
         // if(!set.has(JSON.stringify(currentNode.board))) {
         //     set.add(JSON.stringify(currentNode.board))
         // }
