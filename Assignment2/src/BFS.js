@@ -11,7 +11,7 @@ let solution = [
 ]
 
 // Total number of moves performed to find solution
-let numberOfMoves = 0
+let graphDepth = 0
 
 // Queue for keeping track of order of the nodes
 let queue = new Queue()
@@ -81,11 +81,13 @@ function getPossibleMoves (address) {
  */
 function getNode(currentNode, move, x, y) {
     let newNode = new Node()
-    newNode.board = JSON.parse(JSON.stringify(currentNode))    
+    newNode.board = JSON.parse(JSON.stringify(currentNode.board))
+    newNode.moveHistory = JSON.parse(JSON.stringify(currentNode.moveHistory))
+
     
     switch (move) {
         case 'N':
-            newNode.board[y][x] = currentNode[y+1][x]
+            newNode.board[y][x] = currentNode.board[y+1][x]
             newNode.board[y+1][x] = 'X'
 
             // if node is already in queue, do nothing
@@ -93,70 +95,69 @@ function getNode(currentNode, move, x, y) {
                 return
             }
             else {
-                queue.enqueue(newNode.board)
+                newNode.depth = graphDepth
+                newNode.moveHistory.push(move)
+                queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
-                numberOfMoves++
-                // console.log('move: N,', "total moves: ", numberOfMoves)
-                appendFile('output.txt', JSON.stringify('move: N,', "total moves: ", numberOfMoves), (err) => {
-                    if (err) throw err
-                })
+
+                // appendFile('output.txt', JSON.stringify('move: N,', "total moves: ", numberOfMoves), (err) => {
+                //     if (err) throw err
+                // })
             }
             break
 
         case 'S':
-            newNode.board[y][x] = currentNode[y-1][x]
+            newNode.board[y][x] = currentNode.board[y-1][x]
             newNode.board[y-1][x] = 'X'
 
-            // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
                 return
             }
             else {
-                queue.enqueue(newNode.board)
+                newNode.depth = graphDepth
+                newNode.moveHistory.push(move)
+                queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
-                numberOfMoves++
-                // console.log('move: S,', "total moves: ", numberOfMoves)
-                appendFile('output.txt', JSON.stringify('move: S,', "total moves: ", numberOfMoves), (err) => {
-                    if (err) throw err
-                })
+
+                // appendFile('output.txt', JSON.stringify('move: S,', "total moves: ", numberOfMoves), (err) => {
+                //     if (err) throw err
+                // })
             }
             break
 
         case 'E':
-            newNode.board[y][x] = currentNode[y][x-1]
+            newNode.board[y][x] = currentNode.board[y][x-1]
             newNode.board[y][x-1] = 'X'
 
-            // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
                 return
             } 
             else {
-                queue.enqueue(newNode.board)
+                newNode.depth = graphDepth
+                newNode.moveHistory.push(move)
+                queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
-                numberOfMoves++
-                // console.log('move: E,', "total moves: ", numberOfMoves)
-                appendFile('output.txt', JSON.stringify('move: E,', "total moves: ", numberOfMoves), (err) => {
-                    if (err) throw err
-                })
+                // appendFile('output.txt', JSON.stringify('move: E,', "total moves: ", numberOfMoves), (err) => {
+                //     if (err) throw err
+                // })
             }
             break
         
         case 'W': 
-            newNode.board[y][x] = currentNode[y][x+1]
+            newNode.board[y][x] = currentNode.board[y][x+1]
             newNode.board[y][x+1] = 'X'
 
-            // if node is already in queue, do nothing
             if (set.has(JSON.stringify(newNode.board))) {
                 return
             } 
             else {
-                queue.enqueue(newNode.board)
+                newNode.depth = graphDepth
+                newNode.moveHistory.push(move)
+                queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
-                numberOfMoves++
-                // console.log('move: W,', "total moves: ", numberOfMoves)
-                appendFile('output.txt', JSON.stringify('move: W,', "total moves: ", numberOfMoves), (err) => {
-                    if (err) throw err
-                })
+                // appendFile('output.txt', JSON.stringify('move: W,', "total moves: ", numberOfMoves), (err) => {
+                //     if (err) throw err
+                // })
             }
             break
 
@@ -171,37 +172,44 @@ function getNode(currentNode, move, x, y) {
  * The idea is to queue all neighboring nodes of the given node
  */
 function queueNeighbors (currentNode) {
-    let address = getEmptyTile(currentNode)
-
+    let address = getEmptyTile(currentNode.board)
     let moves = getPossibleMoves(address)
-    // console.log("possible moves from current node are ", moves)
     let x = address[1]
     let y = address[0]
 
     for (let i = 0; i < moves.length; i++) {
         getNode(currentNode, moves[i], x, y)
     }
-
+    graphDepth++
 }
 
 export function BFSSolution (puzzle) {
-    let isSolved = false
-
     // add initial position to queue
-    queue.enqueue(puzzle.board)
+    queue.enqueue(puzzle)
+    graphDepth++
 
     // print initial board state
-    writeFile('output.txt', JSON.stringify(puzzle.board), (err) => {
+    let str = "Original board:  " + JSON.stringify(puzzle.board)
+    writeFile('output.txt', str, (err) => {
         if (err) throw err
     })    
 
     console.log("Calculating BFS solution, this may take awhile... ")
 
-    while(!isSolved) {
+    while(true) {
         let currentNode = queue.dequeue()
-        if (equals(currentNode, solution)) {
-            isSolved = true
+        console.log("currentNode in main is", currentNode)
+
+        if (equals(currentNode.board, solution)) {
             console.log("Solution found!")
+
+            let output = " moves made: " + JSON.stringify(currentNode.moveHistory) + 
+            ". Solution found in " + JSON.stringify(currentNode.depth) + " moves!"
+
+            appendFile('output.txt', output, (err) => {
+                if (err) throw err
+            })    
+            break
         }
         queueNeighbors(currentNode)
         // TESTS

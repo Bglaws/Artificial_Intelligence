@@ -6,6 +6,9 @@ export class Node {
             [, , , ],
             [, , , ]
         ]
+        // for keeping track of how many moves made to reach current node 
+        this.depth = 0
+        this.moveHistory = []
     }
 
     fillBoard (nums) {
