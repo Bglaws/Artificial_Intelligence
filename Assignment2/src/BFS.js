@@ -84,7 +84,6 @@ function getNode(currentNode, move, x, y) {
     newNode.board = JSON.parse(JSON.stringify(currentNode.board))
     newNode.moveHistory = JSON.parse(JSON.stringify(currentNode.moveHistory))
 
-    
     switch (move) {
         case 'N':
             newNode.board[y][x] = currentNode.board[y+1][x]
@@ -95,14 +94,10 @@ function getNode(currentNode, move, x, y) {
                 return
             }
             else {
-                newNode.depth = graphDepth
                 newNode.moveHistory.push(move)
+                newNode.depth = newNode.moveHistory.length
                 queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
-
-                // appendFile('output.txt', JSON.stringify('move: N,', "total moves: ", numberOfMoves), (err) => {
-                //     if (err) throw err
-                // })
             }
             break
 
@@ -114,14 +109,10 @@ function getNode(currentNode, move, x, y) {
                 return
             }
             else {
-                newNode.depth = graphDepth
                 newNode.moveHistory.push(move)
+                newNode.depth = newNode.moveHistory.length
                 queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
-
-                // appendFile('output.txt', JSON.stringify('move: S,', "total moves: ", numberOfMoves), (err) => {
-                //     if (err) throw err
-                // })
             }
             break
 
@@ -133,13 +124,10 @@ function getNode(currentNode, move, x, y) {
                 return
             } 
             else {
-                newNode.depth = graphDepth
                 newNode.moveHistory.push(move)
+                newNode.depth = newNode.moveHistory.length
                 queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
-                // appendFile('output.txt', JSON.stringify('move: E,', "total moves: ", numberOfMoves), (err) => {
-                //     if (err) throw err
-                // })
             }
             break
         
@@ -151,13 +139,10 @@ function getNode(currentNode, move, x, y) {
                 return
             } 
             else {
-                newNode.depth = graphDepth
                 newNode.moveHistory.push(move)
+                newNode.depth = newNode.moveHistory.length
                 queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
-                // appendFile('output.txt', JSON.stringify('move: W,', "total moves: ", numberOfMoves), (err) => {
-                //     if (err) throw err
-                // })
             }
             break
 
@@ -180,6 +165,7 @@ function queueNeighbors (currentNode) {
     for (let i = 0; i < moves.length; i++) {
         getNode(currentNode, moves[i], x, y)
     }
+    // this does not accurately keep track of node depth
     graphDepth++
 }
 
@@ -189,8 +175,8 @@ export function BFSSolution (puzzle) {
     graphDepth++
 
     // print initial board state
-    let str = "Original board:  " + JSON.stringify(puzzle.board)
-    writeFile('output.txt', str, (err) => {
+    let str = "Original board:  " + JSON.stringify(puzzle.board) +"\n\n"
+    writeFile('BFSoutput.txt', str, (err) => {
         if (err) throw err
     })    
 
@@ -203,22 +189,14 @@ export function BFSSolution (puzzle) {
         if (equals(currentNode.board, solution)) {
             console.log("Solution found!")
 
-            let output = " moves made: " + JSON.stringify(currentNode.moveHistory) + 
+            let output = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
             ". Solution found in " + JSON.stringify(currentNode.depth) + " moves!"
 
-            appendFile('output.txt', output, (err) => {
+            appendFile('BFSoutput.txt', output, (err) => {
                 if (err) throw err
             })    
             break
         }
         queueNeighbors(currentNode)
-        // TESTS
-
-        // console.log("original position ", puzzle.board)
-        // console.log("queue length is", queue.length)
-        // console.log("current node is ", currentNode)
-        // console.log("set contains ", set.size)
-        // console.log(set)
-        // console.log("queue length is ", queue.length)
     }
 }

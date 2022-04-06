@@ -12,10 +12,10 @@ puzzle.getNewBoard()
 
 let BFSPuzzle = new Node()
 BFSPuzzle.board = [
-    [1,2,3,4],
-    [5,6,7,8],
-    [9,10,11,12],
-    ['X',13,14,15]
+    [2,3,7,'X'],
+    [1,10,8,4],
+    [5,11,6,12],
+    [9,13,14,15]
 ]
 
 switch(args[2]) {
