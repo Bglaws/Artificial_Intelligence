@@ -174,7 +174,7 @@ export function BFSSolution (puzzle) {
         console.log("currentNode is", currentNode)
 
         if (equals(currentNode.board, SOLUTION)) {
-            console.log("Solution found! See DFSoutput for more information.")
+            console.log("Solution found! See BFSoutput for more information.")
 
             let results = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
             ". Solution found in " + JSON.stringify(currentNode.depth) + " moves!"
