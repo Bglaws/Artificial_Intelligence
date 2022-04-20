@@ -6,6 +6,15 @@ export class PriorityQueue {
     }
 
     enqueue(element) {
+
+        for (let i = 0; i < this.elements.length; i++) {
+            if (this.elements[i].priority < element.priority) {
+                this.elements.splice(i, 0, element)
+            }
+        }
+        if (/** element has the lowest value aka highest priority, put it to the front of the queue*/ true) {
+
+        }
         this.elements[this.tail] = element
         this.tail++
     }
