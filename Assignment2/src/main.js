@@ -2,6 +2,7 @@ import { Node } from "./Node.js";
 import { BFSSolution } from "./BFS.js"
 import { DFSSolution } from "./DFS.js";
 import { DFSHandler } from "./DFSRecursive.js"
+import { aStarSolution } from "./AStar.js";
 const args = process.argv
 
 // This node has a randomized board. It takes too long to solve and will not be used.
@@ -41,7 +42,7 @@ switch(args[2]) {
         break
 
     case 'a*':
-        // aStarSolution
+        aStarSolution(BFSPuzzle)
         break
 
     default:

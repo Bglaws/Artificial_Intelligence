@@ -6,9 +6,27 @@ export class Node {
             [, , , ],
             [, , , ]
         ]
-        // for keeping track of how many moves made to reach current node 
+        // priority only required for A*. priority = f score
+        this.priority = -1 
+        // depth will be used for g score
         this.depth = 0
         this.moveHistory = []
+        this.hScore = this.hScore()
+    }
+    // this.board[i][j] is null 
+    hScore () {
+        let count = 0
+        let hScore = 0
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                count++
+                console.log("count is", count, "board index is", this.board[i][j])
+                if (this.board[i][j] == count) {
+                    hScore++
+                }
+            }
+        }
+        return hScore
     }
 
     fillBoard (nums) {
