@@ -4,7 +4,6 @@ import { writeFile, appendFile } from "fs";
 import { SOLUTION } from "./Solution.js";
 // import { PriorityQueue } from "./PriorityQueue.js"
 
-// Queue for keeping track of order of the nodes
 let queue = new Queue()
 
 // Need to use a hashset in conjunction with queue. 
@@ -173,7 +172,8 @@ export function aStarSolution (puzzle) {
     while(true) {
         let currentNode = queue.dequeue()
         console.log("currentNode is", currentNode.board)
-        console.log("hScore is", currentNode.hScore)
+        
+        console.log("hScore is", currentNode.getHScore())
 
         if (equals(currentNode.board, SOLUTION)) {
             console.log("Solution found! See BFSoutput for more information.")

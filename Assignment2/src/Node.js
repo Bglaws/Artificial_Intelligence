@@ -6,27 +6,37 @@ export class Node {
             [, , , ],
             [, , , ]
         ]
-        // priority only required for A*. priority = f score
-        this.priority = -1 
+        
+        this.moveHistory = []
         // depth will be used for g score
         this.depth = 0
-        this.moveHistory = []
-        this.hScore = this.hScore()
+        // priority only required for A*. priority = f score
+        this.priority = -1 
+        this.hScore = -1
     }
-    // this.board[i][j] is null, need to call hScore after currentNode.board is filled
-    hScore () {
+
+    // nodes with the lowest priority will be placed at the head of the PQ
+    setPriority () {
+        this.priority = this.depth + this.hScore
+    }
+
+    getHScore () {
         let count = 0
         let hScore = 0
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 count++
-                console.log("count is", count, "board index is", this.board[i][j])
-                if (this.board[i][j] == count) {
+                // console.log("count is", count, "board index is", this.board[i][j])
+                if (this.board[i][j] == 'X') {
+                    continue
+                }
+                else if (this.board[i][j] != count) {
                     hScore++
                 }
             }
         }
-        return hScore
+        this.hScore = hScore
+        return this.hScore
     }
 
     fillBoard (nums) {
