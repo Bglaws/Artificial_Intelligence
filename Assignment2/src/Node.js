@@ -13,7 +13,7 @@ export class Node {
         this.moveHistory = []
         this.hScore = this.hScore()
     }
-    // this.board[i][j] is null 
+    // this.board[i][j] is null, need to call hScore after currentNode.board is filled
     hScore () {
         let count = 0
         let hScore = 0
