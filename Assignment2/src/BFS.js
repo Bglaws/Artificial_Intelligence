@@ -70,9 +70,7 @@ function getPossibleMoves (address) {
  * if and only if it has not already been added  
  */
 function getNode(currentNode, move, x, y) {
-    let newNode = new Node()
-    newNode.board = JSON.parse(JSON.stringify(currentNode.board))
-    newNode.moveHistory = JSON.parse(JSON.stringify(currentNode.moveHistory))
+    let newNode = new Node(currentNode)
 
     switch (move) {
         case 'N':
@@ -158,6 +156,8 @@ function queueNeighbors (currentNode) {
 }
 
 export function BFSSolution (puzzle) {
+const start = Date.now()
+
     // add initial position to queue
     queue.enqueue(puzzle)
 
@@ -174,10 +174,12 @@ export function BFSSolution (puzzle) {
         console.log("currentNode is", currentNode)
 
         if (equals(currentNode.board, SOLUTION)) {
-            console.log("Solution found! See BFSoutput for more information.")
+            const duration = Date.now() - start
+            console.log("Solution found! Run time:", Math.floor(duration / 1000),"seconds.", "See BFSoutput for more information.")
 
             let results = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
-            ". Solution found in " + JSON.stringify(currentNode.depth) + " moves!"
+            ".\nSolution found in " + JSON.stringify(currentNode.depth) + 
+            " moves with a run time of " + Math.floor(duration/ 1000) + "seconds."
 
             appendFile('../output/BFSoutput.txt', results, (err) => {
                 if (err) throw err

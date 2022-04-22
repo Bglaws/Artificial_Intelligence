@@ -2,9 +2,9 @@ import { Queue } from "./Queue.js";
 import { Node } from "./Node.js"
 import { writeFile, appendFile } from "fs";
 import { SOLUTION } from "./Solution.js";
-// import { PriorityQueue } from "./PriorityQueue.js"
+import { PriorityQueue } from "./PriorityQueue.js"
 
-let queue = new Queue()
+let pQueue = new PriorityQueue()
 
 // Need to use a hashset in conjunction with queue. 
 // This is to ensure no duplicate nodes are added to the queue
@@ -70,9 +70,8 @@ function getPossibleMoves (address) {
  * if and only if it has not already been added  
  */
 function getNode(currentNode, move, x, y) {
-    let newNode = new Node()
-    newNode.board = JSON.parse(JSON.stringify(currentNode.board))
-    newNode.moveHistory = JSON.parse(JSON.stringify(currentNode.moveHistory))
+    let newNode = new Node(currentNode)
+    newNode.setPriority(newNode.getHScore())
 
     switch (move) {
         case 'N':
@@ -86,7 +85,7 @@ function getNode(currentNode, move, x, y) {
             else {
                 newNode.moveHistory.push(move)
                 newNode.depth = newNode.moveHistory.length
-                queue.enqueue(newNode)
+                pQueue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
             break
@@ -101,7 +100,7 @@ function getNode(currentNode, move, x, y) {
             else {
                 newNode.moveHistory.push(move)
                 newNode.depth = newNode.moveHistory.length
-                queue.enqueue(newNode)
+                pQueue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
             break
@@ -116,7 +115,7 @@ function getNode(currentNode, move, x, y) {
             else {
                 newNode.moveHistory.push(move)
                 newNode.depth = newNode.moveHistory.length
-                queue.enqueue(newNode)
+                pQueue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
             break
@@ -131,7 +130,7 @@ function getNode(currentNode, move, x, y) {
             else {
                 newNode.moveHistory.push(move)
                 newNode.depth = newNode.moveHistory.length
-                queue.enqueue(newNode)
+                pQueue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
             break
@@ -158,8 +157,11 @@ function queueNeighbors (currentNode) {
 }
 
 export function aStarSolution (puzzle) {
+    const start = Date.now()
+
     // add initial position to queue
-    queue.enqueue(puzzle)
+    puzzle.setPriority(puzzle.getHScore())
+    pQueue.enqueue(puzzle)
 
     // print starting position
     let str = "Original board:  " + JSON.stringify(puzzle.board) +"\n\n"
@@ -170,13 +172,14 @@ export function aStarSolution (puzzle) {
     console.log("Calculating BFS solution, this may take awhile... ")
 
     while(true) {
-        let currentNode = queue.dequeue()
-        console.log("currentNode is", currentNode.board)
+        let currentNode = pQueue.dequeue()
+        console.log("currentNode is", currentNode)
         
-        console.log("hScore is", currentNode.getHScore())
+        // console.log("hScore is", currentNode.getHScore())
 
         if (equals(currentNode.board, SOLUTION)) {
-            console.log("Solution found! See BFSoutput for more information.")
+            const duration = Date.now() - start
+            console.log("Solution found! Run time:", Math.floor(duration / 1000),"seconds.", "See BFSoutput for more information.")
 
             let results = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
             ". Solution found in " + JSON.stringify(currentNode.depth) + " moves!"

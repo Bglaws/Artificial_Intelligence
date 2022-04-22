@@ -1,44 +1,32 @@
 export class PriorityQueue {
+    
     constructor() {
         this.elements = []
-        this.head = 0
-        this.tail = 0
     }
 
     enqueue(element) {
 
         for (let i = 0; i < this.elements.length; i++) {
-            if (this.elements[i].priority < element.priority) {
+            // if current element in queue is less than element to be inserted, then 
+            if (element.priority > this.elements[i].priority) {
                 this.elements.splice(i, 0, element)
+                return
             }
         }
-        if (/** element has the lowest value aka highest priority, put it to the front of the queue*/ true) {
-
-        }
-        this.elements[this.tail] = element
-        this.tail++
+        // if element.priority is not greater than any elements in the queue, add it to the end
+        this.elements.push(element)
     }
 
     dequeue() {
-        const item = this.elements[this.head]
-        delete this.elements[this.head]
-        this.head++
+        const item = this.elements.pop()
         return item
     }
 
-    peek() {
-        return this.elements[this.head]
-    }
-
-    peekTail() {
-        return this.elements[this.tail]
-    }
-
     get length() {
-        return this.tail - this.head
+        return this.elements.length
     }
 
     get isEmpty() {
-        return this.length === 0
+        return this.elements.length === 0
     }
 }
