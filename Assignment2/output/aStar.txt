@@ -1,0 +1,4 @@
+Original board:  [[2,3,7,"X"],[1,10,8,4],[5,11,6,12],[9,13,14,15]]
+
+moves made: ["N","E","N","E","S","W","S","E","E","N","N","N","W","W","W"].
+Solution found in 15 moves with a run time of 0seconds.

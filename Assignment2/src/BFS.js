@@ -83,7 +83,6 @@ function getNode(currentNode, move, x, y) {
             }
             else {
                 newNode.moveHistory.push(move)
-                newNode.depth = newNode.moveHistory.length
                 queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
@@ -98,7 +97,6 @@ function getNode(currentNode, move, x, y) {
             }
             else {
                 newNode.moveHistory.push(move)
-                newNode.depth = newNode.moveHistory.length
                 queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
@@ -113,7 +111,6 @@ function getNode(currentNode, move, x, y) {
             } 
             else {
                 newNode.moveHistory.push(move)
-                newNode.depth = newNode.moveHistory.length
                 queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
@@ -128,7 +125,6 @@ function getNode(currentNode, move, x, y) {
             } 
             else {
                 newNode.moveHistory.push(move)
-                newNode.depth = newNode.moveHistory.length
                 queue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
@@ -163,25 +159,26 @@ const start = Date.now()
 
     // print starting position
     let str = "Original board:  " + JSON.stringify(puzzle.board) +"\n\n"
-    writeFile('../output/BFSoutput.txt', str, (err) => {
+    writeFile('../output/BFS.txt', str, (err) => {
         if (err) throw err
     })    
 
-    console.log("Calculating BFS solution, this may take awhile... ")
+    console.log("Calculating BFS solution, this may take a while... ")
 
     while(true) {
         let currentNode = queue.dequeue()
-        console.log("currentNode is", currentNode)
+        console.log("currentNode is", currentNode.board, "\nmoveHistory", currentNode.moveHistory, "\ndepth", currentNode.depth)
+        console.log("--------------------")
 
         if (equals(currentNode.board, SOLUTION)) {
             const duration = Date.now() - start
-            console.log("Solution found! Run time:", Math.floor(duration / 1000),"seconds.", "See BFSoutput for more information.")
+            console.log("Solution found! Run time:", Math.floor(duration / 1000),"seconds.", "See BFS.txt for more information.")
 
             let results = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
             ".\nSolution found in " + JSON.stringify(currentNode.depth) + 
             " moves with a run time of " + Math.floor(duration/ 1000) + "seconds."
 
-            appendFile('../output/BFSoutput.txt', results, (err) => {
+            appendFile('../output/BFS.txt', results, (err) => {
                 if (err) throw err
             })    
             break

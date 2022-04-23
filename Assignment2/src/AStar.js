@@ -71,7 +71,6 @@ function getPossibleMoves (address) {
  */
 function getNode(currentNode, move, x, y) {
     let newNode = new Node(currentNode)
-    newNode.setPriority(newNode.getHScore())
 
     switch (move) {
         case 'N':
@@ -84,7 +83,6 @@ function getNode(currentNode, move, x, y) {
             }
             else {
                 newNode.moveHistory.push(move)
-                newNode.depth = newNode.moveHistory.length
                 pQueue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
@@ -99,7 +97,6 @@ function getNode(currentNode, move, x, y) {
             }
             else {
                 newNode.moveHistory.push(move)
-                newNode.depth = newNode.moveHistory.length
                 pQueue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
@@ -114,7 +111,6 @@ function getNode(currentNode, move, x, y) {
             } 
             else {
                 newNode.moveHistory.push(move)
-                newNode.depth = newNode.moveHistory.length
                 pQueue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
@@ -129,7 +125,6 @@ function getNode(currentNode, move, x, y) {
             } 
             else {
                 newNode.moveHistory.push(move)
-                newNode.depth = newNode.moveHistory.length
                 pQueue.enqueue(newNode)
                 set.add(JSON.stringify(newNode.board))
             }
@@ -165,26 +160,28 @@ export function aStarSolution (puzzle) {
 
     // print starting position
     let str = "Original board:  " + JSON.stringify(puzzle.board) +"\n\n"
-    writeFile('../output/BFSoutput.txt', str, (err) => {
+    writeFile('../output/aStar.txt', str, (err) => {
         if (err) throw err
     })    
 
-    console.log("Calculating BFS solution, this may take awhile... ")
+    console.log("Calculating A* solution, this may take a while... ")
 
     while(true) {
         let currentNode = pQueue.dequeue()
-        console.log("currentNode is", currentNode)
+        console.log("currentNode is", currentNode.board, "\nmoveHistory", currentNode.moveHistory, "\ndepth", currentNode.depth, "\npriority", currentNode.priority)
+        console.log("--------------------")
         
         // console.log("hScore is", currentNode.getHScore())
 
         if (equals(currentNode.board, SOLUTION)) {
             const duration = Date.now() - start
-            console.log("Solution found! Run time:", Math.floor(duration / 1000),"seconds.", "See BFSoutput for more information.")
+            console.log("Solution found! Run time:", Math.floor(duration / 1000),"seconds.", "See aStar.txt for more information.")
 
             let results = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
-            ". Solution found in " + JSON.stringify(currentNode.depth) + " moves!"
-
-            appendFile('../output/BFSoutput.txt', results, (err) => {
+            ".\nSolution found in " + JSON.stringify(currentNode.depth) + 
+            " moves with a run time of " + Math.floor(duration/ 1000) + "seconds."
+            
+            appendFile('../output/aStar.txt', results, (err) => {
                 if (err) throw err
             })    
             break

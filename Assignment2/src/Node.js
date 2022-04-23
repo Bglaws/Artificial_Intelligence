@@ -1,26 +1,25 @@
 export class Node {
 
-    // rewrite this so that hscore and subsequently priority is calculated in the constructor
     constructor(parentNode) {
         if (parentNode != null) {
              this.board = JSON.parse(JSON.stringify(parentNode.board))
              this.moveHistory = JSON.parse(JSON.stringify(parentNode.moveHistory))
+             this.depth = parentNode.depth + 1
+             this.hScore = this.getHScore()
+             this.priority = this.depth + this.hScore
         }
         else {
             this.board = [[, , , ],[, , , ],[, , , ],[, , , ]]
             this.moveHistory = []
+            this.depth = 0
+            this.hScore = -1
+            this.priority = -1
         }   
-        
-        // depth will be used for g score
-        // priority only required for A*. priority = f score 
-        this.depth = 0
-        this.priority = -1 
-        this.hScore = -1
     }
 
-    // nodes with the lowest priority will be placed at the head of the PQ
+    // this method only required for the root node
     setPriority (hScore) {
-        this.priority = this.depth + this.hScore
+        this.priority = this.depth + hScore
     }
 
     getHScore () {
@@ -38,8 +37,7 @@ export class Node {
                 }
             }
         }
-        this.hScore = hScore
-        return this.hScore
+        return hScore
     }
 
     fillBoard (nums) {

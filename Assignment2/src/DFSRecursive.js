@@ -107,7 +107,7 @@ function recursiveDFS(currentNode) {
     console.log("currentNode is", currentNode)
 
     if (equals(currentNode.board, SOLUTION)) {
-        console.log("Solution found! See DFSoutput for more information.")
+        console.log("Solution found! See DFS.txt for more information.")
         solutionFound = true
         solvedNode = currentNode
         return 
@@ -144,7 +144,7 @@ export function DFSHandler (puzzle) {
 
     // print starting position
     let str = "Original board:  " + JSON.stringify(puzzle.board) +"\n\n"
-    writeFile('../output/DFSoutput.txt', str, (err) => {
+    writeFile('../output/DFS.txt', str, (err) => {
         if (err) throw err
     })       
 
@@ -154,7 +154,7 @@ export function DFSHandler (puzzle) {
     let results = "moves made: " + JSON.stringify(solvedNode.moveHistory) + 
     ". Solution found in " + JSON.stringify(solvedNode.depth) + " moves!"
 
-    appendFile('../output/DFSoutput.txt', results, (err) => {
+    appendFile('../output/DFS.txt', results, (err) => {
         if (err) throw err
     }) 
 }
