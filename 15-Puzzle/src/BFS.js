@@ -172,11 +172,13 @@ const start = Date.now()
 
         if (equals(currentNode.board, SOLUTION)) {
             const duration = Date.now() - start
-            console.log("Solution found! Run time:", Math.floor(duration / 1000),"seconds.", "See BFS.txt for more information.")
+            console.log("Solution found! Run time:", Math.floor(duration / 1000),
+            "seconds. Total number of nodes visited:", set.size, "See BFS.txt for more information.")
 
             let results = "moves made: " + JSON.stringify(currentNode.moveHistory) + 
             ".\nSolution found in " + JSON.stringify(currentNode.depth) + 
-            " moves with a run time of " + Math.floor(duration/ 1000) + "seconds."
+            " moves with a run time of " + Math.floor(duration/ 1000) + " seconds. " +
+            "total nodes visited: " + set.size
 
             appendFile('../output/BFS.txt', results, (err) => {
                 if (err) throw err
